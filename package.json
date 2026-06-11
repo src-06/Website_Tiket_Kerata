@@ -10,13 +10,6 @@
     "format": "prettier --check .",
     "format:fix": "prettier --write ."
   },
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "^11.4.0",
-      "onFail": "download"
-    }
-  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@laravel/vite-plugin-wayfinder": "^0.1.7",
