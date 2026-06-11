@@ -1,0 +1,141 @@
+<script setup lang="ts">
+import { ref } from "vue"
+import { router } from "@inertiajs/vue3"
+import { proses } from "@/routes/pembayaran"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Train, MapPin, Clock, ArmchairIcon, Wallet, CreditCard, QrCode, CheckCircle } from "@lucide/vue"
+
+const props = defineProps<{
+  tiket: {
+    id_tiket: number
+    kursi: string
+    harga: number
+    status_pembayaran: string
+    penumpang: { nama: string; email: string; no_hp: string }
+    jadwal: {
+      kereta: { nama_kereta: string; kelas: string }
+      stasiun_asal: { nama_stasiun: string; kota: string }
+      stasiun_tujuan: { nama_stasiun: string; kota: string }
+      waktu_berangkat: string
+      waktu_tiba: string
+    }
+  }
+}>()
+
+const metodeBayar = ref("")
+const loading = ref(false)
+
+function formatHarga(amount: number) {
+  return "Rp " + amount.toLocaleString("id-ID")
+}
+
+function formatWaktu(dateStr: string) {
+  const d = new Date(dateStr)
+  return d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })
+}
+
+function bayar() {
+  if (!metodeBayar.value) return
+  loading.value = true
+  router.post(proses.url(props.tiket.id_tiket), {
+    metode_bayar: metodeBayar.value,
+  })
+}
+
+const metodePembayaran = [
+  { id: "Transfer Bank", label: "Transfer Bank", icon: CreditCard, desc: "BCA, Mandiri, BNI, BRI" },
+  { id: "E-Wallet", label: "E-Wallet", icon: Wallet, desc: "GoPay, OVO, Dana, ShopeePay" },
+  { id: "QRIS", label: "QRIS", icon: QrCode, desc: "Scan QRIS di aplikasi pembayaran" },
+]
+</script>
+
+<template>
+  <div class="mx-auto max-w-3xl px-4 py-8">
+    <div class="mb-6 flex items-center gap-2">
+      <Wallet class="size-6" />
+      <h1 class="text-2xl font-bold">Pembayaran</h1>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-5">
+      <div class="lg:col-span-3">
+        <Card>
+          <CardHeader>
+            <CardTitle class="flex items-center gap-2">
+              <Wallet class="size-5" />
+              Pilih Metode Pembayaran
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-3">
+            <button
+              v-for="m in metodePembayaran"
+              :key="m.id"
+              type="button"
+              @click="metodeBayar = m.id"
+              :class="[
+                'flex w-full cursor-pointer items-center gap-4 rounded-lg border p-4 text-left transition-all',
+                metodeBayar === m.id
+                  ? 'border-primary bg-primary/5 ring-primary/20 ring-2'
+                  : 'hover:border-primary/50'
+              ]"
+            >
+              <component :is="m.icon" class="size-8" :class="metodeBayar === m.id ? 'text-primary' : 'text-muted-foreground'" />
+              <div>
+                <p class="font-medium">{{ m.label }}</p>
+                <p class="text-muted-foreground text-sm">{{ m.desc }}</p>
+              </div>
+              <CheckCircle v-if="metodeBayar === m.id" class="text-primary ml-auto size-5" />
+            </button>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div class="lg:col-span-2">
+        <Card class="sticky top-4">
+          <CardHeader>
+            <CardTitle class="flex items-center gap-2">
+              <Train class="size-5" />
+              Ringkasan Tiket
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-3">
+            <div class="flex items-center gap-2">
+              <Train class="size-4" />
+              <span class="font-medium">{{ tiket.jadwal.kereta.nama_kereta }}</span>
+              <Badge variant="secondary" class="ml-auto">{{ tiket.jadwal.kereta.kelas }}</Badge>
+            </div>
+            <Separator />
+            <div class="flex items-center gap-2 text-sm">
+              <MapPin class="size-4" />
+              <span>{{ tiket.jadwal.stasiun_asal.nama_stasiun }} &rarr; {{ tiket.jadwal.stasiun_tujuan.nama_stasiun }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm">
+              <Clock class="size-4" />
+              <span>{{ formatWaktu(tiket.jadwal.waktu_berangkat) }} - {{ formatWaktu(tiket.jadwal.waktu_tiba) }}</span>
+            </div>
+            <Separator />
+            <div class="text-sm">
+              <p><strong>Nama:</strong> {{ tiket.penumpang.nama }}</p>
+              <p><strong>Kursi:</strong> {{ tiket.kursi }}</p>
+            </div>
+            <Separator />
+            <div class="flex items-center justify-between">
+              <span class="text-sm">Total</span>
+              <span class="text-primary text-xl font-bold">{{ formatHarga(tiket.harga) }}</span>
+            </div>
+            <Button
+              class="mt-2 w-full cursor-pointer"
+              size="lg"
+              :disabled="!metodeBayar || loading"
+              @click="bayar"
+            >
+              {{ loading ? "Memproses..." : "Bayar Sekarang" }}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  </div>
+</template>
