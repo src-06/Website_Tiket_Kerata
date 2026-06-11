@@ -8,52 +8,69 @@ use Inertia\Inertia;
 
 class StasiunController extends Controller
 {
-  public function index()
-  {
-    return Inertia::render('admin/stasiun', [
-      'stasiuns' => Stasiun::latest()->get(),
-    ]);
-  }
+    public function index()
+    {
+        $stasiuns = Stasiun::latest()->paginate(10);
 
-  public function create()
-  {
-    return Inertia::render('admin/stasiun-form');
-  }
+        return Inertia::render('admin/stasiun', [
+            'stasiuns' => [
+                'data' => $stasiuns->items(),
+                'meta' => [
+                    'current_page' => $stasiuns->currentPage(),
+                    'last_page' => $stasiuns->lastPage(),
+                    'from' => $stasiuns->firstItem(),
+                    'to' => $stasiuns->lastItem(),
+                    'total' => $stasiuns->total(),
+                    'links' => $stasiuns->linkCollection()->map(fn ($link) => [
+                        'url' => $link['url'],
+                        'label' => $link['label'],
+                        'active' => $link['active'],
+                    ]),
+                ],
+            ],
+        ]);
+    }
 
-  public function store(Request $request)
-  {
-    $validated = $request->validate([
-      'nama_stasiun' => 'required|string|max:255',
-      'kota' => 'required|string|max:255',
-    ]);
+    public function create()
+    {
+        return Inertia::render('admin/stasiun-form');
+    }
 
-    Stasiun::create($validated);
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nama_stasiun' => 'required|string|max:255',
+            'kota' => 'required|string|max:255',
+        ]);
 
-    return redirect()->route('stasiun')->with('success', 'Stasiun berhasil ditambahkan');
-  }
+        Stasiun::create($validated);
 
-  public function edit(Stasiun $stasiun)
-  {
-    return Inertia::render('admin/stasiun-form', [
-      'stasiun' => $stasiun,
-    ]);
-  }
+        return redirect()->route('stasiun')->with('success', 'Stasiun berhasil ditambahkan');
+    }
 
-  public function update(Request $request, Stasiun $stasiun)
-  {
-    $validated = $request->validate([
-      'nama_stasiun' => 'required|string|max:255',
-      'kota' => 'required|string|max:255',
-    ]);
+    public function edit(Stasiun $stasiun)
+    {
+        return Inertia::render('admin/stasiun-form', [
+            'stasiun' => $stasiun,
+        ]);
+    }
 
-    $stasiun->update($validated);
+    public function update(Request $request, Stasiun $stasiun)
+    {
+        $validated = $request->validate([
+            'nama_stasiun' => 'required|string|max:255',
+            'kota' => 'required|string|max:255',
+        ]);
 
-    return redirect()->route('stasiun')->with('success', 'Stasiun berhasil diubah');
-  }
+        $stasiun->update($validated);
 
-  public function destroy(Stasiun $stasiun)
-  {
-    $stasiun->delete();
-    return redirect()->route('stasiun')->with('success', 'Stasiun berhasil dihapus');
-  }
+        return redirect()->route('stasiun')->with('success', 'Stasiun berhasil diubah');
+    }
+
+    public function destroy(Stasiun $stasiun)
+    {
+        $stasiun->delete();
+
+        return redirect()->route('stasiun')->with('success', 'Stasiun berhasil dihapus');
+    }
 }

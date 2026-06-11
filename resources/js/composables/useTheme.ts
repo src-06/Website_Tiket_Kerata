@@ -15,7 +15,7 @@ function applyTheme(dark: boolean) {
 isDark.value = getInitialTheme()
 applyTheme(isDark.value)
 
-watch(isDark, (val) => {
+watch(isDark, val => {
   applyTheme(val)
   localStorage.setItem("theme", val ? "dark" : "light")
 })

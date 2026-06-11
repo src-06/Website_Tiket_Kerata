@@ -1,27 +1,39 @@
 <script setup lang="ts">
-import { Train, Search, CalendarRange, Building2, Ticket, ListOrdered } from "@lucide/vue"
-import { tiket, jadwal, kereta, stasiun } from "@/routes"
-import { home } from "@/routes"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarSeparator,
-} from "@/components/ui/sidebar"
-import SidebarHeader from "./ui/sidebar/SidebarHeader.vue"
+  import { Train, Search, CalendarRange, Building2, Ticket } from "@lucide/vue"
+  import { tiket, jadwal, kereta, stasiun } from "@/routes"
+  import { home } from "@/routes"
+  import {
+    Sidebar,
+    SidebarContent,
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarSeparator
+  } from "@/components/ui/sidebar"
+  import SidebarHeader from "./ui/sidebar/SidebarHeader.vue"
+  import SidebarFooter from "./ui/sidebar/SidebarFooter.vue"
+  import { Link } from "@inertiajs/vue3"
+  import { useTheme } from "@/composables/useTheme"
+  import { Moon, Sun } from "@lucide/vue"
+  const { isDark, toggle } = useTheme()
 </script>
 
 <template>
-  <Sidebar collapsible="icon">
+  <Sidebar
+    collapsible="icon"
+    class="overflow-x-hidden"
+  >
     <SidebarHeader>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton as-child size="lg">
-            <a :href="home.url()">
+          <SidebarMenuButton
+            as-child
+            size="lg"
+            tooltip="Beranda"
+          >
+            <Link :href="home.url()">
               <div
                 class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
               >
@@ -29,9 +41,9 @@ import SidebarHeader from "./ui/sidebar/SidebarHeader.vue"
               </div>
               <div class="flex flex-col gap-0.5 leading-none">
                 <span class="font-semibold">Tiket Kereta</span>
-                <span class="text-xs">Pemesanan Online</span>
+                <span class="text-xs">Website Pemesanan</span>
               </div>
-            </a>
+            </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -41,11 +53,14 @@ import SidebarHeader from "./ui/sidebar/SidebarHeader.vue"
         <SidebarGroupLabel>Pemesanan</SidebarGroupLabel>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton as-child>
-              <a :href="home.url()">
+            <SidebarMenuButton
+              as-child
+              tooltip="Cari Tiket"
+            >
+              <Link :href="home.url()">
                 <Search />
                 <span>Cari Tiket</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -55,39 +70,65 @@ import SidebarHeader from "./ui/sidebar/SidebarHeader.vue"
         <SidebarGroupLabel>Data Master</SidebarGroupLabel>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton as-child>
-              <a :href="tiket.url()">
+            <SidebarMenuButton
+              as-child
+              tooltip="Daftar Tiket"
+            >
+              <Link :href="tiket.url()">
                 <Ticket />
                 <span>Daftar Tiket</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton as-child>
-              <a :href="jadwal.url()">
+            <SidebarMenuButton
+              as-child
+              tooltip="Daftar Jadwal"
+            >
+              <Link :href="jadwal.url()">
                 <CalendarRange />
                 <span>Daftar Jadwal</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton as-child>
-              <a :href="kereta.url()">
+            <SidebarMenuButton
+              as-child
+              tooltip="Daftar Kereta"
+            >
+              <Link :href="kereta.url()">
                 <Train />
                 <span>Daftar Kereta</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton as-child>
-              <a :href="stasiun.url()">
+            <SidebarMenuButton
+              as-child
+              tooltip="Daftar Stasiun"
+            >
+              <Link :href="stasiun.url()">
                 <Building2 />
                 <span>Daftar Stasiun</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroup>
     </SidebarContent>
+    <SidebarFooter>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            tooltip="Ganti tema"
+            @click="toggle"
+          >
+            <Sun v-if="isDark" />
+            <Moon v-else />
+            <span>{{ isDark ? "Terang" : "Gelap" }}</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </SidebarFooter>
   </Sidebar>
 </template>

@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\KeretaController::create
-* @see app/Http/Controllers/KeretaController.php:18
+* @see app/Http/Controllers/KeretaController.php:34
 * @route '/kereta/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\KeretaController::create
-* @see app/Http/Controllers/KeretaController.php:18
+* @see app/Http/Controllers/KeretaController.php:34
 * @route '/kereta/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\KeretaController::create
-* @see app/Http/Controllers/KeretaController.php:18
+* @see app/Http/Controllers/KeretaController.php:34
 * @route '/kereta/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\KeretaController::create
-* @see app/Http/Controllers/KeretaController.php:18
+* @see app/Http/Controllers/KeretaController.php:34
 * @route '/kereta/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -89,7 +89,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\KeretaController::store
-* @see app/Http/Controllers/KeretaController.php:23
+* @see app/Http/Controllers/KeretaController.php:39
 * @route '/kereta'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -104,7 +104,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\KeretaController::store
-* @see app/Http/Controllers/KeretaController.php:23
+* @see app/Http/Controllers/KeretaController.php:39
 * @route '/kereta'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -113,7 +113,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\KeretaController::store
-* @see app/Http/Controllers/KeretaController.php:23
+* @see app/Http/Controllers/KeretaController.php:39
 * @route '/kereta'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\KeretaController::edit
-* @see app/Http/Controllers/KeretaController.php:35
+* @see app/Http/Controllers/KeretaController.php:51
 * @route '/kereta/{kereta}/edit'
 */
 export const edit = (args: { kereta: number | { id_kereta: number } } | [kereta: number | { id_kereta: number } ] | number | { id_kereta: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -138,7 +138,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\KeretaController::edit
-* @see app/Http/Controllers/KeretaController.php:35
+* @see app/Http/Controllers/KeretaController.php:51
 * @route '/kereta/{kereta}/edit'
 */
 edit.url = (args: { kereta: number | { id_kereta: number } } | [kereta: number | { id_kereta: number } ] | number | { id_kereta: number }, options?: RouteQueryOptions) => {
@@ -171,7 +171,7 @@ edit.url = (args: { kereta: number | { id_kereta: number } } | [kereta: number |
 
 /**
 * @see \App\Http\Controllers\KeretaController::edit
-* @see app/Http/Controllers/KeretaController.php:35
+* @see app/Http/Controllers/KeretaController.php:51
 * @route '/kereta/{kereta}/edit'
 */
 edit.get = (args: { kereta: number | { id_kereta: number } } | [kereta: number | { id_kereta: number } ] | number | { id_kereta: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -181,7 +181,7 @@ edit.get = (args: { kereta: number | { id_kereta: number } } | [kereta: number |
 
 /**
 * @see \App\Http\Controllers\KeretaController::edit
-* @see app/Http/Controllers/KeretaController.php:35
+* @see app/Http/Controllers/KeretaController.php:51
 * @route '/kereta/{kereta}/edit'
 */
 edit.head = (args: { kereta: number | { id_kereta: number } } | [kereta: number | { id_kereta: number } ] | number | { id_kereta: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -191,7 +191,7 @@ edit.head = (args: { kereta: number | { id_kereta: number } } | [kereta: number 
 
 /**
 * @see \App\Http\Controllers\KeretaController::update
-* @see app/Http/Controllers/KeretaController.php:42
+* @see app/Http/Controllers/KeretaController.php:58
 * @route '/kereta/{kereta}'
 */
 export const update = (args: { kereta: number | { id_kereta: number } } | [kereta: number | { id_kereta: number } ] | number | { id_kereta: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -206,7 +206,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\KeretaController::update
-* @see app/Http/Controllers/KeretaController.php:42
+* @see app/Http/Controllers/KeretaController.php:58
 * @route '/kereta/{kereta}'
 */
 update.url = (args: { kereta: number | { id_kereta: number } } | [kereta: number | { id_kereta: number } ] | number | { id_kereta: number }, options?: RouteQueryOptions) => {
@@ -239,7 +239,7 @@ update.url = (args: { kereta: number | { id_kereta: number } } | [kereta: number
 
 /**
 * @see \App\Http\Controllers\KeretaController::update
-* @see app/Http/Controllers/KeretaController.php:42
+* @see app/Http/Controllers/KeretaController.php:58
 * @route '/kereta/{kereta}'
 */
 update.put = (args: { kereta: number | { id_kereta: number } } | [kereta: number | { id_kereta: number } ] | number | { id_kereta: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -249,7 +249,7 @@ update.put = (args: { kereta: number | { id_kereta: number } } | [kereta: number
 
 /**
 * @see \App\Http\Controllers\KeretaController::destroy
-* @see app/Http/Controllers/KeretaController.php:54
+* @see app/Http/Controllers/KeretaController.php:70
 * @route '/kereta/{kereta}'
 */
 export const destroy = (args: { kereta: number | { id_kereta: number } } | [kereta: number | { id_kereta: number } ] | number | { id_kereta: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -264,7 +264,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\KeretaController::destroy
-* @see app/Http/Controllers/KeretaController.php:54
+* @see app/Http/Controllers/KeretaController.php:70
 * @route '/kereta/{kereta}'
 */
 destroy.url = (args: { kereta: number | { id_kereta: number } } | [kereta: number | { id_kereta: number } ] | number | { id_kereta: number }, options?: RouteQueryOptions) => {
@@ -297,7 +297,7 @@ destroy.url = (args: { kereta: number | { id_kereta: number } } | [kereta: numbe
 
 /**
 * @see \App\Http\Controllers\KeretaController::destroy
-* @see app/Http/Controllers/KeretaController.php:54
+* @see app/Http/Controllers/KeretaController.php:70
 * @route '/kereta/{kereta}'
 */
 destroy.delete = (args: { kereta: number | { id_kereta: number } } | [kereta: number | { id_kereta: number } ] | number | { id_kereta: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
