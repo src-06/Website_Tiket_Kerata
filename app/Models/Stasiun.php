@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[Table('stasiun', key: 'id_stasiun')]
+#[Fillable(['nama_stasiun', 'kota'])]
 class Stasiun extends Model
 {
-    protected $table = 'stasiun';
-    protected $primaryKey = 'id_stasiun';
-
-    protected $fillable = [
-        'nama_stasiun',
-        'kota',
-    ];
+    use HasFactory;
 
     public function jadwalAsal()
     {

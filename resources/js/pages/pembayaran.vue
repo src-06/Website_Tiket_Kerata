@@ -1,55 +1,53 @@
 <script setup lang="ts">
-import { ref } from "vue"
-import { router } from "@inertiajs/vue3"
-import { proses } from "@/routes/pembayaran"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Train, MapPin, Clock, ArmchairIcon, Wallet, CreditCard, QrCode, CheckCircle } from "@lucide/vue"
+  import { ref } from "vue"
+  import { router } from "@inertiajs/vue3"
+  import { proses } from "@/routes/pembayaran"
+  import { Button } from "@/components/ui/button"
+  import { Badge } from "@/components/ui/badge"
+  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+  import { Separator } from "@/components/ui/separator"
+  import { Train, MapPin, Clock, Wallet, CreditCard, QrCode, CheckCircle } from "@lucide/vue"
+  import { useFormat } from "@/composables/useFormat"
 
-const props = defineProps<{
-  tiket: {
-    id_tiket: number
-    kursi: string
-    harga: number
-    status_pembayaran: string
-    penumpang: { nama: string; email: string; no_hp: string }
-    jadwal: {
-      kereta: { nama_kereta: string; kelas: string }
-      stasiun_asal: { nama_stasiun: string; kota: string }
-      stasiun_tujuan: { nama_stasiun: string; kota: string }
-      waktu_berangkat: string
-      waktu_tiba: string
+  const props = defineProps<{
+    tiket: {
+      id_tiket: number
+      kursi: string
+      harga: number
+      status_pembayaran: string
+      penumpang: { nama: string; email: string; no_hp: string }
+      jadwal: {
+        kereta: { nama_kereta: string; kelas: string }
+        stasiun_asal: { nama_stasiun: string; kota: string }
+        stasiun_tujuan: { nama_stasiun: string; kota: string }
+        waktu_berangkat: string
+        waktu_tiba: string
+      }
     }
+  }>()
+
+  const metodeBayar = ref("")
+  const loading = ref(false)
+  const { harga: formatHarga, waktu: formatWaktu } = useFormat()
+
+  function bayar() {
+    if (!metodeBayar.value) return
+    loading.value = true
+    router.post(proses.url(props.tiket.id_tiket), {
+      metode_bayar: metodeBayar.value
+    })
   }
-}>()
 
-const metodeBayar = ref("")
-const loading = ref(false)
-
-function formatHarga(amount: number) {
-  return "Rp " + amount.toLocaleString("id-ID")
-}
-
-function formatWaktu(dateStr: string) {
-  const d = new Date(dateStr)
-  return d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })
-}
-
-function bayar() {
-  if (!metodeBayar.value) return
-  loading.value = true
-  router.post(proses.url(props.tiket.id_tiket), {
-    metode_bayar: metodeBayar.value,
-  })
-}
-
-const metodePembayaran = [
-  { id: "Transfer Bank", label: "Transfer Bank", icon: CreditCard, desc: "BCA, Mandiri, BNI, BRI" },
-  { id: "E-Wallet", label: "E-Wallet", icon: Wallet, desc: "GoPay, OVO, Dana, ShopeePay" },
-  { id: "QRIS", label: "QRIS", icon: QrCode, desc: "Scan QRIS di aplikasi pembayaran" },
-]
+  const metodePembayaran = [
+    {
+      id: "Transfer Bank",
+      label: "Transfer Bank",
+      icon: CreditCard,
+      desc: "BCA, Mandiri, BNI, BRI"
+    },
+    { id: "E-Wallet", label: "E-Wallet", icon: Wallet, desc: "GoPay, OVO, Dana, ShopeePay" },
+    { id: "QRIS", label: "QRIS", icon: QrCode, desc: "Scan QRIS di aplikasi pembayaran" }
+  ]
 </script>
 
 <template>
@@ -73,20 +71,27 @@ const metodePembayaran = [
               v-for="m in metodePembayaran"
               :key="m.id"
               type="button"
-              @click="metodeBayar = m.id"
               :class="[
                 'flex w-full cursor-pointer items-center gap-4 rounded-lg border p-4 text-left transition-all',
                 metodeBayar === m.id
                   ? 'border-primary bg-primary/5 ring-primary/20 ring-2'
                   : 'hover:border-primary/50'
               ]"
+              @click="metodeBayar = m.id"
             >
-              <component :is="m.icon" class="size-8" :class="metodeBayar === m.id ? 'text-primary' : 'text-muted-foreground'" />
+              <component
+                :is="m.icon"
+                class="size-8"
+                :class="metodeBayar === m.id ? 'text-primary' : 'text-muted-foreground'"
+              />
               <div>
                 <p class="font-medium">{{ m.label }}</p>
                 <p class="text-muted-foreground text-sm">{{ m.desc }}</p>
               </div>
-              <CheckCircle v-if="metodeBayar === m.id" class="text-primary ml-auto size-5" />
+              <CheckCircle
+                v-if="metodeBayar === m.id"
+                class="text-primary ml-auto size-5"
+              />
             </button>
           </CardContent>
         </Card>
@@ -104,16 +109,26 @@ const metodePembayaran = [
             <div class="flex items-center gap-2">
               <Train class="size-4" />
               <span class="font-medium">{{ tiket.jadwal.kereta.nama_kereta }}</span>
-              <Badge variant="secondary" class="ml-auto">{{ tiket.jadwal.kereta.kelas }}</Badge>
+              <Badge
+                variant="secondary"
+                class="ml-auto"
+                >{{ tiket.jadwal.kereta.kelas }}</Badge
+              >
             </div>
             <Separator />
             <div class="flex items-center gap-2 text-sm">
               <MapPin class="size-4" />
-              <span>{{ tiket.jadwal.stasiun_asal.nama_stasiun }} &rarr; {{ tiket.jadwal.stasiun_tujuan.nama_stasiun }}</span>
+              <span
+                >{{ tiket.jadwal.stasiun_asal.nama_stasiun }} &rarr;
+                {{ tiket.jadwal.stasiun_tujuan.nama_stasiun }}</span
+              >
             </div>
             <div class="flex items-center gap-2 text-sm">
               <Clock class="size-4" />
-              <span>{{ formatWaktu(tiket.jadwal.waktu_berangkat) }} - {{ formatWaktu(tiket.jadwal.waktu_tiba) }}</span>
+              <span
+                >{{ formatWaktu(tiket.jadwal.waktu_berangkat) }} -
+                {{ formatWaktu(tiket.jadwal.waktu_tiba) }}</span
+              >
             </div>
             <Separator />
             <div class="text-sm">

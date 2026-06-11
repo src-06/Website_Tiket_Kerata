@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\StasiunController::create
-* @see app/Http/Controllers/StasiunController.php:18
+* @see app/Http/Controllers/StasiunController.php:34
 * @route '/stasiun/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\StasiunController::create
-* @see app/Http/Controllers/StasiunController.php:18
+* @see app/Http/Controllers/StasiunController.php:34
 * @route '/stasiun/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\StasiunController::create
-* @see app/Http/Controllers/StasiunController.php:18
+* @see app/Http/Controllers/StasiunController.php:34
 * @route '/stasiun/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\StasiunController::create
-* @see app/Http/Controllers/StasiunController.php:18
+* @see app/Http/Controllers/StasiunController.php:34
 * @route '/stasiun/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -89,7 +89,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\StasiunController::store
-* @see app/Http/Controllers/StasiunController.php:23
+* @see app/Http/Controllers/StasiunController.php:39
 * @route '/stasiun'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -104,7 +104,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\StasiunController::store
-* @see app/Http/Controllers/StasiunController.php:23
+* @see app/Http/Controllers/StasiunController.php:39
 * @route '/stasiun'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -113,7 +113,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\StasiunController::store
-* @see app/Http/Controllers/StasiunController.php:23
+* @see app/Http/Controllers/StasiunController.php:39
 * @route '/stasiun'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\StasiunController::edit
-* @see app/Http/Controllers/StasiunController.php:35
+* @see app/Http/Controllers/StasiunController.php:51
 * @route '/stasiun/{stasiun}/edit'
 */
 export const edit = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: number | { id_stasiun: number } ] | number | { id_stasiun: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -138,7 +138,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\StasiunController::edit
-* @see app/Http/Controllers/StasiunController.php:35
+* @see app/Http/Controllers/StasiunController.php:51
 * @route '/stasiun/{stasiun}/edit'
 */
 edit.url = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: number | { id_stasiun: number } ] | number | { id_stasiun: number }, options?: RouteQueryOptions) => {
@@ -171,7 +171,7 @@ edit.url = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: numbe
 
 /**
 * @see \App\Http\Controllers\StasiunController::edit
-* @see app/Http/Controllers/StasiunController.php:35
+* @see app/Http/Controllers/StasiunController.php:51
 * @route '/stasiun/{stasiun}/edit'
 */
 edit.get = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: number | { id_stasiun: number } ] | number | { id_stasiun: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -181,7 +181,7 @@ edit.get = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: numbe
 
 /**
 * @see \App\Http\Controllers\StasiunController::edit
-* @see app/Http/Controllers/StasiunController.php:35
+* @see app/Http/Controllers/StasiunController.php:51
 * @route '/stasiun/{stasiun}/edit'
 */
 edit.head = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: number | { id_stasiun: number } ] | number | { id_stasiun: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -191,7 +191,7 @@ edit.head = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: numb
 
 /**
 * @see \App\Http\Controllers\StasiunController::update
-* @see app/Http/Controllers/StasiunController.php:42
+* @see app/Http/Controllers/StasiunController.php:58
 * @route '/stasiun/{stasiun}'
 */
 export const update = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: number | { id_stasiun: number } ] | number | { id_stasiun: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -206,7 +206,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\StasiunController::update
-* @see app/Http/Controllers/StasiunController.php:42
+* @see app/Http/Controllers/StasiunController.php:58
 * @route '/stasiun/{stasiun}'
 */
 update.url = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: number | { id_stasiun: number } ] | number | { id_stasiun: number }, options?: RouteQueryOptions) => {
@@ -239,7 +239,7 @@ update.url = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: num
 
 /**
 * @see \App\Http\Controllers\StasiunController::update
-* @see app/Http/Controllers/StasiunController.php:42
+* @see app/Http/Controllers/StasiunController.php:58
 * @route '/stasiun/{stasiun}'
 */
 update.put = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: number | { id_stasiun: number } ] | number | { id_stasiun: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -249,7 +249,7 @@ update.put = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: num
 
 /**
 * @see \App\Http\Controllers\StasiunController::destroy
-* @see app/Http/Controllers/StasiunController.php:54
+* @see app/Http/Controllers/StasiunController.php:70
 * @route '/stasiun/{stasiun}'
 */
 export const destroy = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: number | { id_stasiun: number } ] | number | { id_stasiun: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -264,7 +264,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\StasiunController::destroy
-* @see app/Http/Controllers/StasiunController.php:54
+* @see app/Http/Controllers/StasiunController.php:70
 * @route '/stasiun/{stasiun}'
 */
 destroy.url = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: number | { id_stasiun: number } ] | number | { id_stasiun: number }, options?: RouteQueryOptions) => {
@@ -297,7 +297,7 @@ destroy.url = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: nu
 
 /**
 * @see \App\Http\Controllers\StasiunController::destroy
-* @see app/Http/Controllers/StasiunController.php:54
+* @see app/Http/Controllers/StasiunController.php:70
 * @route '/stasiun/{stasiun}'
 */
 destroy.delete = (args: { stasiun: number | { id_stasiun: number } } | [stasiun: number | { id_stasiun: number } ] | number | { id_stasiun: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

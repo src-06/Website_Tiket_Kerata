@@ -1,107 +1,136 @@
 <script setup lang="ts">
-import { Link } from "@inertiajs/vue3"
-import { invoice } from "@/routes"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Train, Search, MapPin, ArmchairIcon } from "@lucide/vue"
-import { ref, computed } from "vue"
+  import { Link } from "@inertiajs/vue3"
+  import { invoice } from "@/routes"
+  import { Badge } from "@/components/ui/badge"
+  import { Input } from "@/components/ui/input"
+  import { Train, Search, MapPin, ArmchairIcon } from "@lucide/vue"
+  import { ref, computed } from "vue"
+  import { useFormat } from "@/composables/useFormat"
+  import PageHeader from "@/components/PageHeader.vue"
+  import AdminListItem from "@/components/AdminListItem.vue"
+  import EmptyState from "@/components/EmptyState.vue"
+  import AppPagination from "@/components/AppPagination.vue"
 
-const props = defineProps<{
-  tikets: {
-    id_tiket: number
-    kursi: string
-    harga: number
-    status_pembayaran: string
-    penumpang: { nama: string; email: string }
-    jadwal: {
-      kereta: { nama_kereta: string; kelas: string }
-      stasiun_asal: { nama_stasiun: string; kota: string }
-      stasiun_tujuan: { nama_stasiun: string; kota: string }
-      waktu_berangkat: string
+  const props = defineProps<{
+    tikets: {
+      data: {
+        id_tiket: number
+        kursi: string
+        harga: number
+        status_pembayaran: string
+        penumpang: { nama: string; email: string }
+        jadwal: {
+          kereta: { nama_kereta: string; kelas: string }
+          stasiun_asal: { nama_stasiun: string; kota: string }
+          stasiun_tujuan: { nama_stasiun: string; kota: string }
+          waktu_berangkat: string
+        }
+      }[]
+      meta: {
+        current_page: number
+        last_page: number
+        from: number | null
+        to: number | null
+        total: number
+        links: { url: string | null; label: string; active: boolean }[]
+      }
     }
-  }[]
-}>()
+  }>()
 
-const search = ref("")
+  const search = ref("")
 
-const filtered = computed(() => {
-  if (!search.value) return props.tikets
-  const q = search.value.toLowerCase()
-  return props.tikets.filter(
-    (t) =>
-      t.penumpang.nama.toLowerCase().includes(q) ||
-      t.jadwal.kereta.nama_kereta.toLowerCase().includes(q) ||
-      t.kursi.toLowerCase().includes(q) ||
-      String(t.id_tiket).includes(q),
-  )
-})
-
-function formatHarga(amount: number) {
-  return "Rp " + amount.toLocaleString("id-ID")
-}
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
+  const filtered = computed(() => {
+    if (!search.value) return props.tikets.data
+    const q = search.value.toLowerCase()
+    return props.tikets.data.filter(
+      t =>
+        t.penumpang.nama.toLowerCase().includes(q) ||
+        t.jadwal.kereta.nama_kereta.toLowerCase().includes(q) ||
+        t.kursi.toLowerCase().includes(q) ||
+        String(t.id_tiket).includes(q)
+    )
   })
-}
+
+  const { harga: formatHarga, date: formatDate } = useFormat()
 </script>
 
 <template>
   <div class="mx-auto max-w-6xl px-4 py-8">
-    <div class="mb-6 flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-bold">Daftar Tiket</h1>
-        <p class="text-muted-foreground text-sm">Semua tiket yang telah dipesan</p>
-      </div>
-      <div class="relative w-64">
-        <Search class="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-        <Input v-model="search" placeholder="Cari tiket..." class="pl-9" />
-      </div>
-    </div>
+    <PageHeader
+      title="Daftar Tiket"
+      description="Semua tiket yang telah dipesan"
+    >
+      <template #action>
+        <div class="relative w-64">
+          <Search class="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+          <Input
+            v-model="search"
+            placeholder="Cari tiket..."
+            class="pl-9"
+          />
+        </div>
+      </template>
+    </PageHeader>
 
-    <Card v-if="filtered.length === 0">
-      <CardContent class="py-12 text-center">
-        <p class="text-muted-foreground">Tidak ada data tiket</p>
-      </CardContent>
-    </Card>
+    <EmptyState
+      v-if="filtered.length === 0"
+      message="Tidak ada data tiket"
+    />
 
-    <div v-else class="space-y-3">
-      <Card v-for="t in filtered" :key="t.id_tiket" class="hover:bg-accent/50 transition-colors">
-        <CardContent class="flex items-center gap-4 py-4">
-          <div class="flex size-10 items-center justify-center rounded-full bg-primary/10">
-            <Train class="size-5 text-primary" />
+    <div
+      v-else
+      class="space-y-3"
+    >
+      <AdminListItem
+        v-for="t in filtered"
+        :key="t.id_tiket"
+        class="hover:bg-accent/50 transition-colors"
+      >
+        <template #icon><Train class="text-primary size-5" /></template>
+        <template #content>
+          <div class="flex items-center gap-2">
+            <span class="font-medium">#TKT-{{ String(t.id_tiket).padStart(5, "0") }}</span>
+            <Badge
+              :variant="t.status_pembayaran === 'Lunas' ? 'default' : 'secondary'"
+              :class="t.status_pembayaran === 'Lunas' ? 'bg-green-500' : ''"
+            >
+              {{ t.status_pembayaran }}
+            </Badge>
           </div>
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-2">
-              <span class="font-medium">#TKT-{{ String(t.id_tiket).padStart(5, "0") }}</span>
-              <Badge :variant="t.status_pembayaran === 'Lunas' ? 'default' : 'secondary'"
-                :class="t.status_pembayaran === 'Lunas' ? 'bg-green-500' : ''">
-                {{ t.status_pembayaran }}
-              </Badge>
-            </div>
-            <p class="text-muted-foreground mt-1 text-sm">
-              {{ t.penumpang.nama }} &middot; {{ t.jadwal.kereta.nama_kereta }} ({{ t.jadwal.kereta.kelas }})
-            </p>
-            <div class="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-              <span class="flex items-center gap-1"><MapPin class="size-3" /> {{ t.jadwal.stasiun_asal.nama_stasiun }} &rarr; {{ t.jadwal.stasiun_tujuan.nama_stasiun }}</span>
-              <span class="flex items-center gap-1"><ArmchairIcon class="size-3" /> {{ t.kursi }}</span>
-              <span>{{ formatDate(t.jadwal.waktu_berangkat) }}</span>
-              <span class="font-medium text-primary">{{ formatHarga(t.harga) }}</span>
-            </div>
+          <p class="text-muted-foreground mt-1 text-sm">
+            {{ t.penumpang.nama }} &middot; {{ t.jadwal.kereta.nama_kereta }} ({{
+              t.jadwal.kereta.kelas
+            }})
+          </p>
+          <div
+            class="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs"
+          >
+            <span class="flex items-center gap-1"
+              ><MapPin class="size-3" /> {{ t.jadwal.stasiun_asal.nama_stasiun }} &rarr;
+              {{ t.jadwal.stasiun_tujuan.nama_stasiun }}</span
+            >
+            <span class="flex items-center gap-1"
+              ><ArmchairIcon class="size-3" /> {{ t.kursi }}</span
+            >
+            <span>{{ formatDate(t.jadwal.waktu_berangkat) }}</span>
+            <span class="text-primary font-medium">{{ formatHarga(t.harga) }}</span>
           </div>
-          <Link :href="invoice.url(t.id_tiket)" class="text-primary hover:underline text-sm shrink-0">
+        </template>
+        <template #actions>
+          <Link
+            :href="invoice.url(t.id_tiket)"
+            class="text-primary shrink-0 text-sm hover:underline"
+          >
             Detail
           </Link>
-        </CardContent>
-      </Card>
+        </template>
+      </AdminListItem>
 
       <p class="text-muted-foreground mt-2 text-center text-xs">
-        Menampilkan {{ filtered.length }} dari {{ tikets.length }} tiket
+        Menampilkan {{ filtered.length }} dari {{ props.tikets.meta.total }} tiket
       </p>
     </div>
+
+    <AppPagination :meta="tikets.meta" />
   </div>
 </template>

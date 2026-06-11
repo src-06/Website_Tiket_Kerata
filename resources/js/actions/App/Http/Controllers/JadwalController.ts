@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\JadwalController::create
-* @see app/Http/Controllers/JadwalController.php:24
+* @see app/Http/Controllers/JadwalController.php:38
 * @route '/jadwal/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\JadwalController::create
-* @see app/Http/Controllers/JadwalController.php:24
+* @see app/Http/Controllers/JadwalController.php:38
 * @route '/jadwal/create'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\JadwalController::create
-* @see app/Http/Controllers/JadwalController.php:24
+* @see app/Http/Controllers/JadwalController.php:38
 * @route '/jadwal/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\JadwalController::create
-* @see app/Http/Controllers/JadwalController.php:24
+* @see app/Http/Controllers/JadwalController.php:38
 * @route '/jadwal/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -89,7 +89,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\JadwalController::store
-* @see app/Http/Controllers/JadwalController.php:32
+* @see app/Http/Controllers/JadwalController.php:46
 * @route '/jadwal'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -104,7 +104,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\JadwalController::store
-* @see app/Http/Controllers/JadwalController.php:32
+* @see app/Http/Controllers/JadwalController.php:46
 * @route '/jadwal'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -113,7 +113,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\JadwalController::store
-* @see app/Http/Controllers/JadwalController.php:32
+* @see app/Http/Controllers/JadwalController.php:46
 * @route '/jadwal'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\JadwalController::edit
-* @see app/Http/Controllers/JadwalController.php:48
+* @see app/Http/Controllers/JadwalController.php:62
 * @route '/jadwal/{jadwal}/edit'
 */
 export const edit = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number | { id_jadwal: number } ] | number | { id_jadwal: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -138,7 +138,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\JadwalController::edit
-* @see app/Http/Controllers/JadwalController.php:48
+* @see app/Http/Controllers/JadwalController.php:62
 * @route '/jadwal/{jadwal}/edit'
 */
 edit.url = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number | { id_jadwal: number } ] | number | { id_jadwal: number }, options?: RouteQueryOptions) => {
@@ -171,7 +171,7 @@ edit.url = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number |
 
 /**
 * @see \App\Http\Controllers\JadwalController::edit
-* @see app/Http/Controllers/JadwalController.php:48
+* @see app/Http/Controllers/JadwalController.php:62
 * @route '/jadwal/{jadwal}/edit'
 */
 edit.get = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number | { id_jadwal: number } ] | number | { id_jadwal: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -181,7 +181,7 @@ edit.get = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number |
 
 /**
 * @see \App\Http\Controllers\JadwalController::edit
-* @see app/Http/Controllers/JadwalController.php:48
+* @see app/Http/Controllers/JadwalController.php:62
 * @route '/jadwal/{jadwal}/edit'
 */
 edit.head = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number | { id_jadwal: number } ] | number | { id_jadwal: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -191,7 +191,7 @@ edit.head = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number 
 
 /**
 * @see \App\Http\Controllers\JadwalController::update
-* @see app/Http/Controllers/JadwalController.php:57
+* @see app/Http/Controllers/JadwalController.php:71
 * @route '/jadwal/{jadwal}'
 */
 export const update = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number | { id_jadwal: number } ] | number | { id_jadwal: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -206,7 +206,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\JadwalController::update
-* @see app/Http/Controllers/JadwalController.php:57
+* @see app/Http/Controllers/JadwalController.php:71
 * @route '/jadwal/{jadwal}'
 */
 update.url = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number | { id_jadwal: number } ] | number | { id_jadwal: number }, options?: RouteQueryOptions) => {
@@ -239,7 +239,7 @@ update.url = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number
 
 /**
 * @see \App\Http\Controllers\JadwalController::update
-* @see app/Http/Controllers/JadwalController.php:57
+* @see app/Http/Controllers/JadwalController.php:71
 * @route '/jadwal/{jadwal}'
 */
 update.put = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number | { id_jadwal: number } ] | number | { id_jadwal: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -249,7 +249,7 @@ update.put = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number
 
 /**
 * @see \App\Http\Controllers\JadwalController::destroy
-* @see app/Http/Controllers/JadwalController.php:73
+* @see app/Http/Controllers/JadwalController.php:87
 * @route '/jadwal/{jadwal}'
 */
 export const destroy = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number | { id_jadwal: number } ] | number | { id_jadwal: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -264,7 +264,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\JadwalController::destroy
-* @see app/Http/Controllers/JadwalController.php:73
+* @see app/Http/Controllers/JadwalController.php:87
 * @route '/jadwal/{jadwal}'
 */
 destroy.url = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number | { id_jadwal: number } ] | number | { id_jadwal: number }, options?: RouteQueryOptions) => {
@@ -297,7 +297,7 @@ destroy.url = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: numbe
 
 /**
 * @see \App\Http\Controllers\JadwalController::destroy
-* @see app/Http/Controllers/JadwalController.php:73
+* @see app/Http/Controllers/JadwalController.php:87
 * @route '/jadwal/{jadwal}'
 */
 destroy.delete = (args: { jadwal: number | { id_jadwal: number } } | [jadwal: number | { id_jadwal: number } ] | number | { id_jadwal: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

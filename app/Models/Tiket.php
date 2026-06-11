@@ -2,21 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 
+#[Table('tiket', key: 'id_tiket')]
+#[Fillable(['id_penumpang', 'id_jadwal', 'kursi', 'harga', 'status_pembayaran'])]
 class Tiket extends Model
 {
-    protected $table = 'tiket';
-    protected $primaryKey = 'id_tiket';
-
-    protected $fillable = [
-        'id_penumpang',
-        'id_jadwal',
-        'kursi',
-        'harga',
-        'status_pembayaran',
-    ];
-
     public function penumpang()
     {
         return $this->belongsTo(Penumpang::class, 'id_penumpang');

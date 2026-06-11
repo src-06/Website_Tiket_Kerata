@@ -8,15 +8,30 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   ...pluginVue.configs["flat/recommended"],
   {
-    ignores: ["node_modules/**", "public/**", "resources/js/wayfinder/**", "resources/js/routes/**"]
+    ignores: [
+      "node_modules/**",
+      "vendor/**",
+      "public/**",
+      "resources/js/components/**",
+      "resources/js/actions/**",
+      "resources/js/routes/**",
+      "resources/js/wayfinder/**"
+    ]
   },
   {
     files: ["./resources/js/**/*.vue", "./resources/js/**/*.ts"],
     languageOptions: {
+      globals: {
+        window: "readonly",
+        document: "readonly",
+        KeyboardEvent: "readonly",
+        confirm: "readonly"
+      },
       parserOptions: {
         parser: tseslint.parser,
         extraFileExtensions: [".vue"],
-        sourceType: "module"
+        sourceType: "module",
+        tsconfigRootDir: import.meta.dirname
       }
     },
     rules: {

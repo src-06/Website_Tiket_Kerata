@@ -7,12 +7,12 @@ use Inertia\Inertia;
 
 class InvoiceController extends Controller
 {
-  public function invoice(Tiket $tiket)
-  {
-    $tiket->load(['penumpang', 'jadwal.kereta', 'jadwal.stasiunAsal', 'jadwal.stasiunTujuan', 'pembayaran']);
+    public function invoice(Tiket $tiket)
+    {
+        $tiket->load(['penumpang', 'jadwal.kereta', 'jadwal.stasiunAsal', 'jadwal.stasiunTujuan', 'pembayaran']);
 
-    return Inertia::render('invoice', [
-      'tiket' => $tiket,
-    ]);
-  }
+        return Inertia::render('invoice', [
+            'tiket' => $tiket,
+        ]);
+    }
 }

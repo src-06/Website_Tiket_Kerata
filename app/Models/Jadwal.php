@@ -2,21 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[Table('jadwal', key: 'id_jadwal')]
+#[Fillable(['id_kereta', 'id_stasiun_asal', 'id_stasiun_tujuan', 'waktu_berangkat', 'waktu_tiba', 'harga'])]
 class Jadwal extends Model
 {
-    protected $table = 'jadwal';
-    protected $primaryKey = 'id_jadwal';
+    use HasFactory;
 
-    protected $fillable = [
-        'id_kereta',
-        'id_stasiun_asal',
-        'id_stasiun_tujuan',
-        'waktu_berangkat',
-        'waktu_tiba',
-        'harga',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'waktu_berangkat' => 'datetime',
+            'waktu_tiba' => 'datetime',
+        ];
+    }
 
     public function kereta()
     {
