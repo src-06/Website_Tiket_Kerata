@@ -1,0 +1,25 @@
+{
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "semi": false,
+  "singleQuote": false,
+  "trailingComma": "none",
+  "bracketSpacing": true,
+  "arrowParens": "avoid",
+  "printWidth": 100,
+  "overrides": [
+    {
+      "files": "*.css",
+      "options": {
+        "semi": true
+      }
+    },
+    {
+      "files": "*.vue",
+      "options": {
+        "bracketSameLine": false,
+        "vueIndentScriptAndStyle": true,
+        "singleAttributePerLine": true
+      }
+    }
+  ]
+}
