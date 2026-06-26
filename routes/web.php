@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\KeretaController;
@@ -9,6 +10,12 @@ use App\Http\Controllers\PencarianController;
 use App\Http\Controllers\StasiunController;
 use App\Http\Controllers\TiketController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/', [PencarianController::class, 'home'])->name('home');
 Route::get('/jadwal/cari', [PencarianController::class, 'cariJadwal'])->name('jadwal.cari');

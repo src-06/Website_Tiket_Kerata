@@ -1,5 +1,7 @@
 <script setup lang="ts">
-  import { Train, Search, CalendarRange, Building2, Ticket } from "@lucide/vue"
+  import { computed } from "vue"
+  import { usePage, router } from "@inertiajs/vue3"
+  import { Train, Search, CalendarRange, Building2, Ticket, LogOut, LogIn, UserPlus } from "@lucide/vue"
   import { tiket, jadwal, kereta, stasiun } from "@/routes"
   import { home } from "@/routes"
   import {
@@ -17,7 +19,32 @@
   import { Link } from "@inertiajs/vue3"
   import { useTheme } from "@/composables/useTheme"
   import { Moon, Sun } from "@lucide/vue"
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+  } from "@/components/ui/dropdown-menu"
+  import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+
   const { isDark, toggle } = useTheme()
+  const page = usePage()
+  const user = computed(() => page.props.auth?.user)
+
+  function logout() {
+    router.post("/logout")
+  }
+
+  function getInitials(name: string) {
+    return name
+      .split(" ")
+      .map(n => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2)
+  }
 </script>
 
 <template>
@@ -118,6 +145,64 @@
     </SidebarContent>
     <SidebarFooter>
       <SidebarMenu>
+        <SidebarMenuItem v-if="user">
+          <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+              <SidebarMenuButton
+                size="lg"
+                tooltip="Profil"
+              >
+                <Avatar class="size-8">
+                  <AvatarFallback class="bg-primary/10 text-primary text-xs font-semibold">
+                    {{ getInitials(user.nama) }}
+                  </AvatarFallback>
+                </Avatar>
+                <div class="flex flex-col gap-0.5 leading-none text-left">
+                  <span class="font-medium">{{ user.nama }}</span>
+                  <span class="text-muted-foreground text-xs">{{ user.email }}</span>
+                </div>
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side="top"
+              class="w-56"
+            >
+              <DropdownMenuLabel>
+                <div class="flex flex-col space-y-1">
+                  <p class="text-sm font-medium">{{ user.nama }}</p>
+                  <p class="text-muted-foreground text-xs">{{ user.email }}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem @click="logout">
+                <LogOut class="mr-2 size-4" />
+                <span>Keluar</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SidebarMenuItem>
+        <SidebarMenuItem v-else>
+          <SidebarMenuButton
+            as-child
+            tooltip="Masuk"
+          >
+            <Link href="/login">
+              <LogIn />
+              <span>Masuk</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem v-if="!user">
+          <SidebarMenuButton
+            as-child
+            tooltip="Daftar"
+          >
+            <Link href="/register">
+              <UserPlus />
+              <span>Daftar</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton
             tooltip="Ganti tema"
