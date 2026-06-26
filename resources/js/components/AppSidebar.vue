@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { computed } from "vue"
   import { usePage, router } from "@inertiajs/vue3"
-  import { Train, Search, Ticket, LogOut, LogIn, UserPlus, LayoutDashboard, CalendarRange } from "@lucide/vue"
+  import { Train, Search, Ticket, LogOut, LogIn, UserPlus, LayoutDashboard, CalendarRange, User } from "@lucide/vue"
   import { home } from "@/routes"
   import {
     Sidebar,
@@ -161,6 +161,13 @@
                   <span>Dashboard Admin</span>
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuItem as-child>
+                <Link href="/profile">
+                  <User class="mr-2 size-4" />
+                  <span>Profil Saya</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem @click="logout">
                 <LogOut class="mr-2 size-4" />
                 <span>Keluar</span>

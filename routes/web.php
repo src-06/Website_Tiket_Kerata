@@ -9,6 +9,7 @@ use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\PencarianController;
 use App\Http\Controllers\PenumpangController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StasiunController;
 use App\Http\Controllers\TiketController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,9 @@ Route::get('/invoice/{tiket}', [InvoiceController::class, 'invoice'])->name('inv
 
 Route::get('/tiket-saya', [TiketController::class, 'tiketSaya'])->name('tiketSaya');
 Route::get('/jadwal', [JadwalController::class, 'daftarJadwal'])->name('jadwal');
+
+Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
+Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');

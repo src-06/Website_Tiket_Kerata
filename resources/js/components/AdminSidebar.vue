@@ -9,7 +9,8 @@
     LogOut,
     LayoutDashboard,
     Users,
-    Home
+    Home,
+    User
   } from "@lucide/vue"
   import {
     Sidebar,
@@ -203,6 +204,12 @@
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem as-child>
+                <Link href="/profile">
+                  <User class="mr-2 size-4" />
+                  <span>Profil Saya</span>
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem @click="logout">
                 <LogOut class="mr-2 size-4" />
                 <span>Keluar</span>
