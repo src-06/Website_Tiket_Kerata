@@ -113,10 +113,6 @@
           </Link>
         </template>
       </AdminListItem>
-
-      <p class="text-muted-foreground mt-2 text-center text-xs">
-        Menampilkan {{ filtered.length }} dari {{ props.jadwals.meta.total }} jadwal
-      </p>
     </div>
 
     <AppPagination :meta="jadwals.meta" />

@@ -111,10 +111,6 @@
           </div>
         </template>
       </AdminListItem>
-
-      <p class="text-muted-foreground mt-2 text-center text-xs">
-        Menampilkan {{ filtered.length }} dari {{ props.penumpangs.meta.total }} penumpang
-      </p>
     </div>
 
     <AppPagination :meta="penumpangs.meta" />
