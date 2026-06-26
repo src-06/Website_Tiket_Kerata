@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Penumpang;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PenumpangController extends Controller
@@ -29,5 +30,16 @@ class PenumpangController extends Controller
                 ],
             ],
         ]);
+    }
+
+    public function updateRole(Request $request, Penumpang $penumpang)
+    {
+        $validated = $request->validate([
+            'role' => 'required|in:admin,user',
+        ]);
+
+        $penumpang->update($validated);
+
+        return back();
     }
 }

@@ -1,8 +1,10 @@
 <script setup lang="ts">
   import admin from "@/layouts/admin.vue"
+  import { router } from "@inertiajs/vue3"
   import { Badge } from "@/components/ui/badge"
+  import { Button } from "@/components/ui/button"
   import { Input } from "@/components/ui/input"
-  import { Users, Search, Mail, Phone, Shield } from "@lucide/vue"
+  import { Users, Search, Mail, Phone, Shield, UserCog } from "@lucide/vue"
   import { ref, computed } from "vue"
   import PageHeader from "@/components/PageHeader.vue"
   import AdminListItem from "@/components/AdminListItem.vue"
@@ -51,6 +53,12 @@
       month: "short",
       year: "numeric"
     })
+  }
+
+  function toggleRole(p: { id_penumpang: number; role: string }) {
+    const newRole = p.role === "admin" ? "user" : "admin"
+    if (!confirm(`Ubah role ${p.nama} menjadi ${newRole}?`)) return
+    router.put(`/admin/penumpang/${p.id_penumpang}/role`, { role: newRole })
   }
 </script>
 
@@ -109,6 +117,17 @@
             >
             <span>Terdaftar {{ formatDate(p.created_at) }}</span>
           </div>
+        </template>
+        <template #actions>
+          <Button
+            variant="outline"
+            size="sm"
+            class="cursor-pointer"
+            @click="toggleRole(p)"
+          >
+            <UserCog class="mr-1 size-4" />
+            {{ p.role === "admin" ? "Jadikan User" : "Jadikan Admin" }}
+          </Button>
         </template>
       </AdminListItem>
     </div>
