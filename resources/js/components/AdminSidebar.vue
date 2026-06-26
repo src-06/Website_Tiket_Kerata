@@ -8,7 +8,8 @@
     Ticket,
     LogOut,
     LayoutDashboard,
-    Users
+    Users,
+    Home
   } from "@lucide/vue"
   import {
     Sidebar,
@@ -85,6 +86,17 @@
       <SidebarGroup>
         <SidebarGroupLabel>Menu</SidebarGroupLabel>
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              as-child
+              tooltip="Beranda"
+            >
+              <Link href="/">
+                <Home />
+                <span>Beranda</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child

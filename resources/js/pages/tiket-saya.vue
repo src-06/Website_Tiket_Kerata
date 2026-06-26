@@ -54,7 +54,7 @@
 </script>
 
 <template>
-  <div class="mx-auto max-w-4xl px-4 py-8">
+  <div class="mx-auto max-w-6xl px-4 py-8">
     <PageHeader
       title="Tiket Saya"
       description="Daftar tiket yang telah Anda beli"
