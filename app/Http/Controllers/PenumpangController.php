@@ -42,4 +42,11 @@ class PenumpangController extends Controller
 
         return back();
     }
+
+    public function destroy(Penumpang $penumpang)
+    {
+        $penumpang->delete();
+
+        return back();
+    }
 }

@@ -8,69 +8,69 @@ use Inertia\Inertia;
 
 class KeretaController extends Controller
 {
-  public function index()
-  {
-    $keretas = Kereta::latest()->paginate(10);
+    public function index()
+    {
+        $keretas = Kereta::latest()->paginate(10);
 
-    return Inertia::render('admin/kereta', [
-      'keretas' => [
-        'data' => $keretas->items(),
-        'meta' => [
-          'current_page' => $keretas->currentPage(),
-          'last_page' => $keretas->lastPage(),
-          'from' => $keretas->firstItem(),
-          'to' => $keretas->lastItem(),
-          'total' => $keretas->total(),
-          'links' => $keretas->linkCollection()->map(fn($link) => [
-            'url' => $link['url'],
-            'label' => $link['label'],
-            'active' => $link['active'],
-          ]),
-        ],
-      ],
-    ]);
-  }
+        return Inertia::render('admin/kereta', [
+            'keretas' => [
+                'data' => $keretas->items(),
+                'meta' => [
+                    'current_page' => $keretas->currentPage(),
+                    'last_page' => $keretas->lastPage(),
+                    'from' => $keretas->firstItem(),
+                    'to' => $keretas->lastItem(),
+                    'total' => $keretas->total(),
+                    'links' => $keretas->linkCollection()->map(fn ($link) => [
+                        'url' => $link['url'],
+                        'label' => $link['label'],
+                        'active' => $link['active'],
+                    ]),
+                ],
+            ],
+        ]);
+    }
 
-  public function create()
-  {
-    return Inertia::render('admin/kereta-form');
-  }
+    public function create()
+    {
+        return Inertia::render('admin/kereta-form');
+    }
 
-  public function store(Request $request)
-  {
-    $validated = $request->validate([
-      'nama_kereta' => 'required|string|max:255',
-      'kelas' => 'required|string|max:50',
-    ]);
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nama_kereta' => 'required|string|max:255',
+            'kelas' => 'required|string|max:50',
+        ]);
 
-    Kereta::create($validated);
+        Kereta::create($validated);
 
-    return redirect()->route('kereta')->with('success', 'Kereta berhasil ditambahkan');
-  }
+        return redirect()->route('admin.kereta')->with('success', 'Kereta berhasil ditambahkan');
+    }
 
-  public function edit(Kereta $kereta)
-  {
-    return Inertia::render('admin/kereta-form', [
-      'kereta' => $kereta,
-    ]);
-  }
+    public function edit(Kereta $kereta)
+    {
+        return Inertia::render('admin/kereta-form', [
+            'kereta' => $kereta,
+        ]);
+    }
 
-  public function update(Request $request, Kereta $kereta)
-  {
-    $validated = $request->validate([
-      'nama_kereta' => 'required|string|max:255',
-      'kelas' => 'required|string|max:50',
-    ]);
+    public function update(Request $request, Kereta $kereta)
+    {
+        $validated = $request->validate([
+            'nama_kereta' => 'required|string|max:255',
+            'kelas' => 'required|string|max:50',
+        ]);
 
-    $kereta->update($validated);
+        $kereta->update($validated);
 
-    return redirect()->route('kereta')->with('success', 'Kereta berhasil diubah');
-  }
+        return redirect()->route('admin.kereta')->with('success', 'Kereta berhasil diubah');
+    }
 
-  public function destroy(Kereta $kereta)
-  {
-    $kereta->delete();
+    public function destroy(Kereta $kereta)
+    {
+        $kereta->delete();
 
-    return redirect()->route('kereta')->with('success', 'Kereta berhasil dihapus');
-  }
+        return redirect()->route('admin.kereta')->with('success', 'Kereta berhasil dihapus');
+    }
 }

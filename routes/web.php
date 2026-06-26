@@ -34,6 +34,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/penumpang', [PenumpangController::class, 'index'])->name('penumpang');
     Route::put('/penumpang/{penumpang}/role', [PenumpangController::class, 'updateRole'])->name('penumpang.role');
+    Route::delete('/penumpang/{penumpang}', [PenumpangController::class, 'destroy'])->name('penumpang.destroy');
 
     Route::get('/tiket', [TiketController::class, 'index'])->name('tiket');
 

@@ -4,7 +4,7 @@
   import { Badge } from "@/components/ui/badge"
   import { Button } from "@/components/ui/button"
   import { Input } from "@/components/ui/input"
-  import { Users, Search, Mail, Phone, Shield, UserCog } from "@lucide/vue"
+  import { Users, Search, Mail, Phone, Shield, UserCog, Trash2 } from "@lucide/vue"
   import { ref, computed } from "vue"
   import PageHeader from "@/components/PageHeader.vue"
   import AdminListItem from "@/components/AdminListItem.vue"
@@ -55,10 +55,89 @@
     })
   }
 
-  function toggleRole(p: { id_penumpang: number; role: string }) {
+  function toggleRole(p: { id_penumpang: number; nama: string; role: string }) {
     const newRole = p.role === "admin" ? "user" : "admin"
-    if (!confirm(`Ubah role ${p.nama} menjadi ${newRole}?`)) return
-    router.put(`/admin/penumpang/${p.id_penumpang}/role`, { role: newRole })
+    const action = p.role === "admin" ? "Jadikan User" : "Jadikan Admin"
+
+    const overlay = document.createElement("div")
+    overlay.className = "fixed inset-0 z-[99999] flex items-center justify-center bg-black/50"
+
+    const card = document.createElement("div")
+    card.className =
+      "bg-popover text-popover-foreground mx-4 flex max-w-sm flex-col gap-4 rounded-xl border p-6 shadow-lg"
+
+    const msg = document.createElement("p")
+    msg.className = "text-sm font-medium"
+    msg.textContent = `${action} ${p.nama}?`
+    card.appendChild(msg)
+
+    const actions = document.createElement("div")
+    actions.className = "flex justify-end gap-2"
+
+    const batalBtn = document.createElement("button")
+    batalBtn.className =
+      "border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex h-8 items-center justify-center gap-2 rounded-md border px-3 text-xs font-medium whitespace-nowrap cursor-pointer"
+    batalBtn.textContent = "Batal"
+    batalBtn.onclick = () => document.body.removeChild(overlay)
+    actions.appendChild(batalBtn)
+
+    const okBtn = document.createElement("button")
+    okBtn.className =
+      "bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-8 items-center justify-center gap-2 rounded-md px-3 text-xs font-medium whitespace-nowrap cursor-pointer"
+    okBtn.textContent = action
+    okBtn.onclick = () => {
+      document.body.removeChild(overlay)
+      router.put(`/admin/penumpang/${p.id_penumpang}/role`, { role: newRole })
+    }
+    actions.appendChild(okBtn)
+
+    card.appendChild(actions)
+    overlay.appendChild(card)
+    overlay.onclick = () => document.body.removeChild(overlay)
+    card.onclick = e => e.stopPropagation()
+
+    document.body.appendChild(overlay)
+  }
+
+  function hapusPenumpang(p: { id_penumpang: number; nama: string }) {
+    const overlay = document.createElement("div")
+    overlay.className = "fixed inset-0 z-[99999] flex items-center justify-center bg-black/50"
+
+    const card = document.createElement("div")
+    card.className =
+      "bg-popover text-popover-foreground mx-4 flex max-w-sm flex-col gap-4 rounded-xl border p-6 shadow-lg"
+
+    const msg = document.createElement("p")
+    msg.className = "text-sm font-medium"
+    msg.textContent = `Yakin ingin menghapus penumpang ${p.nama}?`
+    card.appendChild(msg)
+
+    const actions = document.createElement("div")
+    actions.className = "flex justify-end gap-2"
+
+    const batalBtn = document.createElement("button")
+    batalBtn.className =
+      "border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex h-8 items-center justify-center gap-2 rounded-md border px-3 text-xs font-medium whitespace-nowrap cursor-pointer"
+    batalBtn.textContent = "Batal"
+    batalBtn.onclick = () => document.body.removeChild(overlay)
+    actions.appendChild(batalBtn)
+
+    const hapusBtn = document.createElement("button")
+    hapusBtn.className =
+      "bg-destructive text-foreground hover:bg-destructive/70 inline-flex h-8 items-center justify-center gap-2 rounded-md px-3 text-xs font-medium whitespace-nowrap cursor-pointer"
+    hapusBtn.textContent = "Hapus"
+    hapusBtn.onclick = () => {
+      document.body.removeChild(overlay)
+      router.delete(`/admin/penumpang/${p.id_penumpang}`)
+    }
+    actions.appendChild(hapusBtn)
+
+    card.appendChild(actions)
+    overlay.appendChild(card)
+    overlay.onclick = () => document.body.removeChild(overlay)
+    card.onclick = e => e.stopPropagation()
+
+    document.body.appendChild(overlay)
   }
 </script>
 
@@ -127,6 +206,14 @@
           >
             <UserCog class="mr-1 size-4" />
             {{ p.role === "admin" ? "Jadikan User" : "Jadikan Admin" }}
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            class="cursor-pointer"
+            @click="hapusPenumpang(p)"
+          >
+            <Trash2 class="size-4" />
           </Button>
         </template>
       </AdminListItem>
