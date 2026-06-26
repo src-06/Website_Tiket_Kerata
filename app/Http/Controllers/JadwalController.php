@@ -35,6 +35,32 @@ class JadwalController extends Controller
         ]);
     }
 
+    public function daftarJadwal()
+    {
+        $jadwals = Jadwal::with(['kereta', 'stasiunAsal', 'stasiunTujuan'])
+            ->where('waktu_berangkat', '>=', now())
+            ->orderBy('waktu_berangkat')
+            ->paginate(10);
+
+        return Inertia::render('jadwal', [
+            'jadwals' => [
+                'data' => $jadwals->items(),
+                'meta' => [
+                    'current_page' => $jadwals->currentPage(),
+                    'last_page' => $jadwals->lastPage(),
+                    'from' => $jadwals->firstItem(),
+                    'to' => $jadwals->lastItem(),
+                    'total' => $jadwals->total(),
+                    'links' => $jadwals->linkCollection()->map(fn ($link) => [
+                        'url' => $link['url'],
+                        'label' => $link['label'],
+                        'active' => $link['active'],
+                    ]),
+                ],
+            ],
+        ]);
+    }
+
     public function create()
     {
         return Inertia::render('admin/jadwal-form', [

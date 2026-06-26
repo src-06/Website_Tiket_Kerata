@@ -3,8 +3,6 @@
   import { router, usePage } from "@inertiajs/vue3"
   import { simpan } from "@/routes/booking"
   import { Button } from "@/components/ui/button"
-  import { Input } from "@/components/ui/input"
-  import { Label } from "@/components/ui/label"
   import { Badge } from "@/components/ui/badge"
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
   import { Separator } from "@/components/ui/separator"
@@ -25,11 +23,9 @@
     }
     kursiTerpakai: string[]
     semuaKursi: string[]
+    user: { nama: string; email: string; no_hp: string }
   }>()
 
-  const nama = ref("")
-  const email = ref("")
-  const no_hp = ref("")
   const kursi = ref("")
   const errors = ref<Record<string, string>>({})
 
@@ -53,20 +49,12 @@
   function handleSimpan() {
     errors.value = {}
 
-    if (!nama.value) errors.value.nama = "Nama harus diisi"
-    if (!email.value) errors.value.email = "Email harus diisi"
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value))
-      errors.value.email = "Format email tidak valid"
-    if (!no_hp.value) errors.value.no_hp = "No HP harus diisi"
     if (!kursi.value) errors.value.kursi = "Pilih kursi terlebih dahulu"
 
     if (Object.keys(errors.value).length > 0) return
 
     router.post(simpan.url(), {
       id_jadwal: props.jadwal.id_jadwal,
-      nama: nama.value,
-      email: email.value,
-      no_hp: no_hp.value,
       kursi: kursi.value
     })
   }
@@ -86,68 +74,26 @@
             </CardTitle>
           </CardHeader>
           <CardContent class="space-y-4">
-            <div class="space-y-2">
-              <Label for="nama">Nama Lengkap</Label>
-              <div class="relative">
-                <User
-                  class="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2"
-                />
-                <Input
-                  id="nama"
-                  v-model="nama"
-                  placeholder="Masukkan nama lengkap"
-                  class="pl-9"
-                />
+            <div class="flex items-center gap-3">
+              <User class="text-muted-foreground size-4" />
+              <div>
+                <p class="text-muted-foreground text-xs">Nama Lengkap</p>
+                <p class="font-medium">{{ user.nama }}</p>
               </div>
-              <p
-                v-if="errors.nama"
-                class="text-destructive text-xs"
-              >
-                {{ errors.nama }}
-              </p>
             </div>
-
-            <div class="space-y-2">
-              <Label for="email">Email</Label>
-              <div class="relative">
-                <Mail
-                  class="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2"
-                />
-                <Input
-                  id="email"
-                  v-model="email"
-                  type="email"
-                  placeholder="Masukkan email"
-                  class="pl-9"
-                />
+            <div class="flex items-center gap-3">
+              <Mail class="text-muted-foreground size-4" />
+              <div>
+                <p class="text-muted-foreground text-xs">Email</p>
+                <p class="font-medium">{{ user.email }}</p>
               </div>
-              <p
-                v-if="errors.email"
-                class="text-destructive text-xs"
-              >
-                {{ errors.email }}
-              </p>
             </div>
-
-            <div class="space-y-2">
-              <Label for="no_hp">No. Handphone</Label>
-              <div class="relative">
-                <Phone
-                  class="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2"
-                />
-                <Input
-                  id="no_hp"
-                  v-model="no_hp"
-                  placeholder="Masukkan no handphone"
-                  class="pl-9"
-                />
+            <div class="flex items-center gap-3">
+              <Phone class="text-muted-foreground size-4" />
+              <div>
+                <p class="text-muted-foreground text-xs">No. Handphone</p>
+                <p class="font-medium">{{ user.no_hp }}</p>
               </div>
-              <p
-                v-if="errors.no_hp"
-                class="text-destructive text-xs"
-              >
-                {{ errors.no_hp }}
-              </p>
             </div>
           </CardContent>
         </Card>

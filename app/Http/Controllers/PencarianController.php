@@ -31,7 +31,17 @@ class PencarianController extends Controller
             ->get();
 
         return Inertia::render('jadwal', [
-            'jadwals' => $jadwals,
+            'jadwals' => [
+                'data' => $jadwals,
+                'meta' => [
+                    'current_page' => 1,
+                    'last_page' => 1,
+                    'from' => $jadwals->isNotEmpty() ? 1 : null,
+                    'to' => $jadwals->count(),
+                    'total' => $jadwals->count(),
+                    'links' => [],
+                ],
+            ],
             'stasiunAsal' => Stasiun::find($validated['asal']),
             'stasiunTujuan' => Stasiun::find($validated['tujuan']),
         ]);

@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { computed } from "vue"
   import { usePage, router } from "@inertiajs/vue3"
-  import { Train, Search, Ticket, LogOut, LogIn, UserPlus, LayoutDashboard } from "@lucide/vue"
+  import { Train, Search, Ticket, LogOut, LogIn, UserPlus, LayoutDashboard, CalendarRange } from "@lucide/vue"
   import { home } from "@/routes"
   import {
     Sidebar,
@@ -96,6 +96,17 @@
       <SidebarGroup v-if="user">
         <SidebarGroupLabel>Menu</SidebarGroupLabel>
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              as-child
+              tooltip="Daftar Jadwal"
+            >
+              <Link href="/jadwal">
+                <CalendarRange />
+                <span>Daftar Jadwal</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child

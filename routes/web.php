@@ -28,6 +28,7 @@ Route::post('/pembayaran/{tiket}', [PembayaranController::class, 'prosesPembayar
 Route::get('/invoice/{tiket}', [InvoiceController::class, 'invoice'])->name('invoice');
 
 Route::get('/tiket-saya', [TiketController::class, 'tiketSaya'])->name('tiketSaya');
+Route::get('/jadwal', [JadwalController::class, 'daftarJadwal'])->name('jadwal');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
