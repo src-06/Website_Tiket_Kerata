@@ -21,18 +21,22 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/', [PencarianController::class, 'home'])->name('home');
-Route::get('/jadwal/cari', [PencarianController::class, 'cariJadwal'])->name('jadwal.cari');
-Route::get('/booking/{jadwal}', [PemesananController::class, 'formBooking'])->name('booking.form');
-Route::post('/booking', [PemesananController::class, 'simpanBooking'])->name('booking.simpan');
-Route::get('/pembayaran/{tiket}', [PembayaranController::class, 'formPembayaran'])->name('pembayaran');
-Route::post('/pembayaran/{tiket}', [PembayaranController::class, 'prosesPembayaran'])->name('pembayaran.proses');
-Route::get('/invoice/{tiket}', [InvoiceController::class, 'invoice'])->name('invoice');
+Route::middleware('auth')->group(function () {
+    Route::get('/jadwal/cari', [PencarianController::class, 'showSearch'])->name('jadwal.showSearch');
+    Route::post('/jadwal/cari', [PencarianController::class, 'cariJadwal'])->name('jadwal.cari');
+});
 
-Route::get('/tiket-saya', [TiketController::class, 'tiketSaya'])->name('tiketSaya');
-Route::get('/jadwal', [JadwalController::class, 'daftarJadwal'])->name('jadwal');
-
-Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
-Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+Route::middleware('auth')->group(function () {
+    Route::get('/booking/{jadwal}', [PemesananController::class, 'formBooking'])->name('booking.form');
+    Route::post('/booking', [PemesananController::class, 'simpanBooking'])->name('booking.simpan');
+    Route::get('/pembayaran/{tiket}', [PembayaranController::class, 'formPembayaran'])->name('pembayaran');
+    Route::post('/pembayaran/{tiket}', [PembayaranController::class, 'prosesPembayaran'])->name('pembayaran.proses');
+    Route::get('/invoice/{tiket}', [InvoiceController::class, 'invoice'])->name('invoice');
+    Route::get('/tiket-saya', [TiketController::class, 'tiketSaya'])->name('tiketSaya');
+    Route::get('/jadwal', [JadwalController::class, 'daftarJadwal'])->name('jadwal');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');

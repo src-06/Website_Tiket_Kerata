@@ -7,9 +7,6 @@
   import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
   import { Separator } from "@/components/ui/separator"
   import { User, Mail, Phone, Lock, Train } from "@lucide/vue"
-  import guest from "@/layouts/guest.vue"
-
-  defineOptions({ layout: guest })
 
   const page = usePage()
 
@@ -67,8 +64,9 @@
 </script>
 
 <template>
-  <Card class="w-full max-w-md">
-    <CardHeader class="text-center">
+  <div class="mx-auto flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
+    <Card class="w-full max-w-md">
+      <CardHeader class="text-center">
       <div class="bg-primary/10 mx-auto mb-2 flex size-12 items-center justify-center rounded-full">
         <Train class="text-primary size-6" />
       </div>
@@ -198,5 +196,6 @@
         </p>
       </form>
     </CardContent>
-  </Card>
+    </Card>
+  </div>
 </template>

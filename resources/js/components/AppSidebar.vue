@@ -3,6 +3,7 @@
   import { usePage, router } from "@inertiajs/vue3"
   import { Train, Search, Ticket, LogOut, LogIn, UserPlus, LayoutDashboard, CalendarRange, User } from "@lucide/vue"
   import { home } from "@/routes"
+  import { showSearch } from "@/routes/jadwal"
   import {
     Sidebar,
     SidebarContent,
@@ -76,7 +77,7 @@
       </SidebarMenu>
     </SidebarHeader>
     <SidebarContent>
-      <SidebarGroup>
+      <SidebarGroup v-if="user">
         <SidebarGroupLabel>Pemesanan</SidebarGroupLabel>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -84,7 +85,7 @@
               as-child
               tooltip="Cari Tiket"
             >
-              <Link :href="home.url()">
+              <Link :href="showSearch.url()">
                 <Search />
                 <span>Cari Tiket</span>
               </Link>

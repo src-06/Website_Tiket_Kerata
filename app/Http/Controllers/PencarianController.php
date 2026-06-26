@@ -11,7 +11,12 @@ class PencarianController extends Controller
 {
     public function home()
     {
-        return Inertia::render('home', [
+        return Inertia::render('home');
+    }
+
+    public function showSearch()
+    {
+        return Inertia::render('cari', [
             'stasiuns' => Stasiun::orderBy('kota')->get(),
         ]);
     }
