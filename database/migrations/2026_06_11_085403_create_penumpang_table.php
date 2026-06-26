@@ -13,6 +13,8 @@ return new class extends Migration
             $table->string('nama');
             $table->string('email');
             $table->string('no_hp');
+            $table->string('password')->nullable();
+            $table->enum('role', ['admin', 'user'])->default('user');
             $table->timestamps();
         });
     }
