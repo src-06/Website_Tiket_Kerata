@@ -1,8 +1,10 @@
 <script setup lang="ts">
+  import admin from "@/layouts/admin.vue"
   import { ref } from "vue"
+
+  defineOptions({ layout: admin })
+
   import { router } from "@inertiajs/vue3"
-  import jadwalRoutes from "@/routes/jadwal"
-  import { jadwal as jadwalList } from "@/routes"
   import { Input } from "@/components/ui/input"
   import { Label } from "@/components/ui/label"
   import {
@@ -56,9 +58,9 @@
     }
 
     if (isEdit) {
-      router.put(jadwalRoutes.update.url({ jadwal: props.jadwal!.id_jadwal }), payload)
+      router.put(`/admin/jadwal/${props.jadwal!.id_jadwal}`, payload)
     } else {
-      router.post(jadwalRoutes.store.url(), payload)
+      router.post("/admin/jadwal", payload)
     }
   }
 </script>
@@ -67,7 +69,7 @@
   <AdminFormLayout
     :icon="Clock"
     title="Jadwal"
-    :back-url="jadwalList.url()"
+    back-url="/admin/jadwal"
     :is-edit="isEdit"
     @submit="submit"
   >

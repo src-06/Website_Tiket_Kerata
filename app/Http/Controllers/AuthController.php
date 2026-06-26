@@ -33,7 +33,7 @@ class AuthController extends Controller
         $user = Auth::user();
 
         if ($user->role === Role::Admin) {
-            return redirect()->route('tiket');
+            return redirect()->route('admin.dashboard');
         }
 
         return redirect()->route('home');

@@ -1,6 +1,9 @@
 <script setup lang="ts">
-  import stasiunRoutes from "@/routes/stasiun"
+  import admin from "@/layouts/admin.vue"
   import { Link } from "@inertiajs/vue3"
+
+  defineOptions({ layout: admin })
+
   import { Button } from "@/components/ui/button"
   import { Plus, Pencil, Trash2, MapPin } from "@lucide/vue"
   import { useConfirmDelete } from "@/composables/useConfirmDelete"
@@ -37,7 +40,7 @@
       description="Kelola data stasiun kereta api"
     >
       <template #action>
-        <Link :href="stasiunRoutes.create.url()">
+        <Link href="/admin/stasiun/create">
           <Button class="cursor-pointer"><Plus class="mr-2 size-4" /> Tambah Stasiun</Button>
         </Link>
       </template>
@@ -62,7 +65,7 @@
           <p class="text-muted-foreground text-sm">{{ s.kota }}</p>
         </template>
         <template #actions>
-          <Link :href="stasiunRoutes.edit.url({ stasiun: s.id_stasiun })">
+          <Link :href="`/admin/stasiun/${s.id_stasiun}/edit`">
             <Button
               variant="outline"
               size="sm"
@@ -71,9 +74,7 @@
             /></Button>
           </Link>
           <form
-            @submit.prevent="
-              hapus(stasiunRoutes.destroy.url({ stasiun: s.id_stasiun }), s.nama_stasiun)
-            "
+            @submit.prevent="hapus(`/admin/stasiun/${s.id_stasiun}`, s.nama_stasiun)"
           >
             <Button
               variant="destructive"

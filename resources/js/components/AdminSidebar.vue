@@ -1,8 +1,15 @@
 <script setup lang="ts">
   import { computed } from "vue"
   import { usePage, router } from "@inertiajs/vue3"
-  import { Train, Search, Ticket, LogOut, LogIn, UserPlus, LayoutDashboard } from "@lucide/vue"
-  import { home } from "@/routes"
+  import {
+    Train,
+    CalendarRange,
+    Building2,
+    Ticket,
+    LogOut,
+    LayoutDashboard,
+    Users
+  } from "@lucide/vue"
   import {
     Sidebar,
     SidebarContent,
@@ -31,7 +38,6 @@
   const { isDark, toggle } = useTheme()
   const page = usePage()
   const user = computed(() => page.props.auth?.user)
-  const isAdmin = computed(() => user.value?.role === "admin")
 
   function logout() {
     router.post("/logout")
@@ -58,17 +64,17 @@
           <SidebarMenuButton
             as-child
             size="lg"
-            tooltip="Beranda"
+            tooltip="Admin Panel"
           >
-            <Link :href="home.url()">
+            <Link href="/admin/dashboard">
               <div
                 class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
               >
                 <Train class="size-4" />
               </div>
               <div class="flex flex-col gap-0.5 leading-none">
-                <span class="font-semibold">Tiket Kereta</span>
-                <span class="text-xs">Website Pemesanan</span>
+                <span class="font-semibold">Admin Panel</span>
+                <span class="text-xs">Tiket Kereta</span>
               </div>
             </Link>
           </SidebarMenuButton>
@@ -77,33 +83,77 @@
     </SidebarHeader>
     <SidebarContent>
       <SidebarGroup>
-        <SidebarGroupLabel>Pemesanan</SidebarGroupLabel>
+        <SidebarGroupLabel>Menu</SidebarGroupLabel>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child
-              tooltip="Cari Tiket"
+              tooltip="Dashboard"
             >
-              <Link :href="home.url()">
-                <Search />
-                <span>Cari Tiket</span>
+              <Link href="/admin/dashboard">
+                <LayoutDashboard />
+                <span>Dashboard</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroup>
       <SidebarSeparator />
-      <SidebarGroup v-if="user">
-        <SidebarGroupLabel>Menu</SidebarGroupLabel>
+      <SidebarGroup>
+        <SidebarGroupLabel>Data Master</SidebarGroupLabel>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child
-              tooltip="Tiket Saya"
+              tooltip="Daftar Penumpang"
             >
-              <Link href="/tiket-saya">
+              <Link href="/admin/penumpang">
+                <Users />
+                <span>Daftar Penumpang</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              as-child
+              tooltip="Daftar Tiket"
+            >
+              <Link href="/admin/tiket">
                 <Ticket />
-                <span>Tiket Saya</span>
+                <span>Daftar Tiket</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              as-child
+              tooltip="Daftar Jadwal"
+            >
+              <Link href="/admin/jadwal">
+                <CalendarRange />
+                <span>Daftar Jadwal</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              as-child
+              tooltip="Daftar Kereta"
+            >
+              <Link href="/admin/kereta">
+                <Train />
+                <span>Daftar Kereta</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              as-child
+              tooltip="Daftar Stasiun"
+            >
+              <Link href="/admin/stasiun">
+                <Building2 />
+                <span>Daftar Stasiun</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -141,43 +191,12 @@
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                v-if="isAdmin"
-                as-child
-              >
-                <Link href="/admin/dashboard">
-                  <LayoutDashboard class="mr-2 size-4" />
-                  <span>Dashboard Admin</span>
-                </Link>
-              </DropdownMenuItem>
               <DropdownMenuItem @click="logout">
                 <LogOut class="mr-2 size-4" />
                 <span>Keluar</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </SidebarMenuItem>
-        <SidebarMenuItem v-else>
-          <SidebarMenuButton
-            as-child
-            tooltip="Masuk"
-          >
-            <Link href="/login">
-              <LogIn />
-              <span>Masuk</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        <SidebarMenuItem v-if="!user">
-          <SidebarMenuButton
-            as-child
-            tooltip="Daftar"
-          >
-            <Link href="/register">
-              <UserPlus />
-              <span>Daftar</span>
-            </Link>
-          </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton

@@ -1,6 +1,9 @@
 <script setup lang="ts">
-  import keretaRoutes from "@/routes/kereta"
+  import admin from "@/layouts/admin.vue"
   import { Link } from "@inertiajs/vue3"
+
+  defineOptions({ layout: admin })
+
   import { Button } from "@/components/ui/button"
   import { Badge } from "@/components/ui/badge"
   import { Plus, Pencil, Trash2, Train } from "@lucide/vue"
@@ -38,7 +41,7 @@
       description="Kelola data kereta api"
     >
       <template #action>
-        <Link :href="keretaRoutes.create.url()">
+        <Link href="/admin/kereta/create">
           <Button class="cursor-pointer"><Plus class="mr-2 size-4" /> Tambah Kereta</Button>
         </Link>
       </template>
@@ -67,7 +70,7 @@
           >
         </template>
         <template #actions>
-          <Link :href="keretaRoutes.edit.url({ kereta: k.id_kereta })">
+          <Link :href="`/admin/kereta/${k.id_kereta}/edit`">
             <Button
               variant="outline"
               size="sm"
@@ -76,9 +79,7 @@
             /></Button>
           </Link>
           <form
-            @submit.prevent="
-              hapus(keretaRoutes.destroy.url({ kereta: k.id_kereta }), k.nama_kereta)
-            "
+            @submit.prevent="hapus(`/admin/kereta/${k.id_kereta}`, k.nama_kereta)"
           >
             <Button
               variant="destructive"

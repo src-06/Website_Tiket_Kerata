@@ -1,13 +1,10 @@
 <script setup lang="ts">
-  import admin from "@/layouts/admin.vue"
   import { Link } from "@inertiajs/vue3"
   import { invoice } from "@/routes"
   import { Badge } from "@/components/ui/badge"
   import { Input } from "@/components/ui/input"
   import { Train, Search, MapPin, ArmchairIcon } from "@lucide/vue"
   import { ref, computed } from "vue"
-
-  defineOptions({ layout: admin })
   import { useFormat } from "@/composables/useFormat"
   import PageHeader from "@/components/PageHeader.vue"
   import AdminListItem from "@/components/AdminListItem.vue"
@@ -21,12 +18,12 @@
         kursi: string
         harga: number
         status_pembayaran: string
-        penumpang: { nama: string; email: string }
         jadwal: {
           kereta: { nama_kereta: string; kelas: string }
           stasiun_asal: { nama_stasiun: string; kota: string }
           stasiun_tujuan: { nama_stasiun: string; kota: string }
           waktu_berangkat: string
+          waktu_tiba: string
         }
       }[]
       meta: {
@@ -47,21 +44,20 @@
     const q = search.value.toLowerCase()
     return props.tikets.data.filter(
       t =>
-        t.penumpang.nama.toLowerCase().includes(q) ||
         t.jadwal.kereta.nama_kereta.toLowerCase().includes(q) ||
         t.kursi.toLowerCase().includes(q) ||
         String(t.id_tiket).includes(q)
     )
   })
 
-  const { harga: formatHarga, date: formatDate } = useFormat()
+  const { harga: formatHarga, waktu: formatWaktu, date: formatDate } = useFormat()
 </script>
 
 <template>
-  <div class="mx-auto max-w-6xl px-4 py-8">
+  <div class="mx-auto max-w-4xl px-4 py-8">
     <PageHeader
-      title="Daftar Tiket"
-      description="Semua tiket yang telah dipesan"
+      title="Tiket Saya"
+      description="Daftar tiket yang telah Anda beli"
     >
       <template #action>
         <div class="relative w-64">
@@ -77,7 +73,7 @@
 
     <EmptyState
       v-if="filtered.length === 0"
-      message="Tidak ada data tiket"
+      message="Anda belum memiliki tiket"
     />
 
     <div
@@ -101,9 +97,7 @@
             </Badge>
           </div>
           <p class="text-muted-foreground mt-1 text-sm">
-            {{ t.penumpang.nama }} &middot; {{ t.jadwal.kereta.nama_kereta }} ({{
-              t.jadwal.kereta.kelas
-            }})
+            {{ t.jadwal.kereta.nama_kereta }} ({{ t.jadwal.kereta.kelas }})
           </p>
           <div
             class="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs"
@@ -113,9 +107,9 @@
               {{ t.jadwal.stasiun_tujuan.nama_stasiun }}</span
             >
             <span class="flex items-center gap-1"
-              ><ArmchairIcon class="size-3" /> {{ t.kursi }}</span
+              ><ArmchairIcon class="size-3" /> Kursi {{ t.kursi }}</span
             >
-            <span>{{ formatDate(t.jadwal.waktu_berangkat) }}</span>
+            <span>{{ formatDate(t.jadwal.waktu_berangkat) }} {{ formatWaktu(t.jadwal.waktu_berangkat) }}</span>
             <span class="text-primary font-medium">{{ formatHarga(t.harga) }}</span>
           </div>
         </template>

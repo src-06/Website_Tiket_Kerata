@@ -1,8 +1,11 @@
 <script setup lang="ts">
-  import jadwalRoutes from "@/routes/jadwal"
+  import admin from "@/layouts/admin.vue"
   import { Link } from "@inertiajs/vue3"
-  import { Button } from "@/components/ui/button"
+
+  defineOptions({ layout: admin })
+
   import { Badge } from "@/components/ui/badge"
+  import { Button } from "@/components/ui/button"
   import { Plus, Pencil, Trash2, Train, Clock, MapPin } from "@lucide/vue"
   import { useFormat } from "@/composables/useFormat"
   import { useConfirmDelete } from "@/composables/useConfirmDelete"
@@ -44,7 +47,7 @@
       description="Kelola jadwal keberangkatan kereta"
     >
       <template #action>
-        <Link :href="jadwalRoutes.create.url()">
+        <Link href="/admin/jadwal/create">
           <Button class="cursor-pointer"><Plus class="mr-2 size-4" /> Tambah Jadwal</Button>
         </Link>
       </template>
@@ -84,7 +87,7 @@
           </div>
         </template>
         <template #actions>
-          <Link :href="jadwalRoutes.edit.url({ jadwal: j.id_jadwal })">
+          <Link :href="`/admin/jadwal/${j.id_jadwal}/edit`">
             <Button
               variant="outline"
               size="sm"
@@ -95,7 +98,7 @@
           <form
             @submit.prevent="
               hapus(
-                jadwalRoutes.destroy.url({ jadwal: j.id_jadwal }),
+                `/admin/jadwal/${j.id_jadwal}`,
                 `${j.stasiun_asal.nama_stasiun} - ${j.stasiun_tujuan.nama_stasiun}`
               )
             "
