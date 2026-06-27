@@ -1,7 +1,17 @@
 <script setup lang="ts">
   import { computed } from "vue"
   import { usePage, router } from "@inertiajs/vue3"
-  import { Train, Search, Ticket, LogOut, LogIn, UserPlus, LayoutDashboard, CalendarRange, User } from "@lucide/vue"
+  import {
+    Train,
+    Search,
+    Ticket,
+    LogOut,
+    LogIn,
+    UserPlus,
+    LayoutDashboard,
+    CalendarRange,
+    User
+  } from "@lucide/vue"
   import { home } from "@/routes"
   import { showSearch } from "@/routes/jadwal"
   import {
@@ -136,7 +146,7 @@
                     {{ getInitials(user.nama) }}
                   </AvatarFallback>
                 </Avatar>
-                <div class="flex flex-col gap-0.5 leading-none text-left">
+                <div class="flex flex-col gap-0.5 text-left leading-none">
                   <span class="font-medium">{{ user.nama }}</span>
                   <span class="text-muted-foreground text-xs">{{ user.email }}</span>
                 </div>

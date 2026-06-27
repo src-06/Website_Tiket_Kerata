@@ -187,7 +187,7 @@
                     {{ getInitials(user.nama) }}
                   </AvatarFallback>
                 </Avatar>
-                <div class="flex flex-col gap-0.5 leading-none text-left">
+                <div class="flex flex-col gap-0.5 text-left leading-none">
                   <span class="font-medium">{{ user.nama }}</span>
                   <span class="text-muted-foreground text-xs">{{ user.email }}</span>
                 </div>

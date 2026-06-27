@@ -78,9 +78,7 @@
               ><Pencil class="size-4"
             /></Button>
           </Link>
-          <form
-            @submit.prevent="hapus(`/admin/kereta/${k.id_kereta}`, k.nama_kereta)"
-          >
+          <form @submit.prevent="hapus(`/admin/kereta/${k.id_kereta}`, k.nama_kereta)">
             <Button
               variant="destructive"
               size="sm"

@@ -31,11 +31,26 @@
 
   const kartuStats = [
     { label: "Total Tiket", value: props.stats.tiket, icon: Ticket, color: "text-blue-500" },
-    { label: "Total Jadwal", value: props.stats.jadwal, icon: CalendarRange, color: "text-orange-500" },
+    {
+      label: "Total Jadwal",
+      value: props.stats.jadwal,
+      icon: CalendarRange,
+      color: "text-orange-500"
+    },
     { label: "Total Kereta", value: props.stats.kereta, icon: Train, color: "text-green-500" },
-    { label: "Total Stasiun", value: props.stats.stasiun, icon: Building2, color: "text-purple-500" },
+    {
+      label: "Total Stasiun",
+      value: props.stats.stasiun,
+      icon: Building2,
+      color: "text-purple-500"
+    },
     { label: "Total Penumpang", value: props.stats.penumpang, icon: Users, color: "text-cyan-500" },
-    { label: "Pendapatan", value: formatHarga(props.stats.pendapatan), icon: Banknote, color: "text-emerald-500" }
+    {
+      label: "Pendapatan",
+      value: formatHarga(props.stats.pendapatan),
+      icon: Banknote,
+      color: "text-emerald-500"
+    }
   ]
 </script>
 

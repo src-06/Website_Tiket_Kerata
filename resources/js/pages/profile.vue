@@ -140,7 +140,9 @@
           <div class="space-y-2">
             <Label for="no_hp">No. Handphone</Label>
             <div class="relative">
-              <Phone class="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+              <Phone
+                class="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2"
+              />
               <Input
                 id="no_hp"
                 v-model="no_hp"

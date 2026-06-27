@@ -33,7 +33,9 @@
   <div class="mx-auto flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
     <Card class="w-full max-w-md shadow-lg">
       <CardHeader class="text-center">
-        <div class="bg-primary/10 mx-auto mb-2 flex size-12 items-center justify-center rounded-full">
+        <div
+          class="bg-primary/10 mx-auto mb-2 flex size-12 items-center justify-center rounded-full"
+        >
           <Train class="text-primary size-6" />
         </div>
         <CardTitle class="text-xl">Cari Tiket Kereta</CardTitle>

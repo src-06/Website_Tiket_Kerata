@@ -73,9 +73,7 @@
               ><Pencil class="size-4"
             /></Button>
           </Link>
-          <form
-            @submit.prevent="hapus(`/admin/stasiun/${s.id_stasiun}`, s.nama_stasiun)"
-          >
+          <form @submit.prevent="hapus(`/admin/stasiun/${s.id_stasiun}`, s.nama_stasiun)">
             <Button
               variant="destructive"
               size="sm"

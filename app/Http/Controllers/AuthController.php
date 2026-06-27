@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Role;
 use App\Models\Penumpang;
-use App\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;

@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use App\Role;
+use App\Enums\Role;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,13 +13,10 @@ use Illuminate\Notifications\Notifiable;
 
 #[Table('penumpang', key: 'id_penumpang')]
 #[Fillable(['nama', 'email', 'no_hp', 'password', 'role'])]
+#[Hidden(['password'])]
 class Penumpang extends Authenticatable
 {
     use HasFactory, Notifiable;
-
-    protected $hidden = [
-        'password',
-    ];
 
     protected function casts(): array
     {

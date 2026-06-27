@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed } from "vue"
-  import { usePage } from "@inertiajs/vue3"
+  import { usePage, Link } from "@inertiajs/vue3"
   import { Button } from "@/components/ui/button"
   import { Card, CardContent } from "@/components/ui/card"
   import { Train, Clock, Shield, CreditCard, ArrowRight } from "@lucide/vue"
@@ -18,7 +18,7 @@
   const stats = [
     { value: "50+", label: "Rute Tersedia" },
     { value: "1000+", label: "Tiket Terjual" },
-    { value: "99%", label: "Pelanggan Puas" }
+    { value: "96%", label: "Pelanggan Puas" }
   ]
 </script>
 
@@ -26,9 +26,11 @@
   <div>
     <!-- Hero Section -->
     <section class="border-b">
-      <div class="mx-auto max-w-6xl px-4 py-20 sm:py-28">
+      <div class="mx-auto h-dvh max-w-6xl px-4 py-20 sm:py-28">
         <div class="text-center">
-          <div class="bg-primary/10 mx-auto mb-6 flex size-14 items-center justify-center rounded-2xl">
+          <div
+            class="bg-primary/10 mx-auto mb-6 flex size-14 items-center justify-center rounded-2xl"
+          >
             <Train class="text-primary size-7" />
           </div>
           <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
@@ -36,7 +38,8 @@
             <span class="text-primary"> Tiket Kereta</span>
           </h1>
           <p class="text-muted-foreground mx-auto mt-6 max-w-lg text-lg">
-            Pesan tiket kereta api secara online. Cepat, mudah, dan aman. Temukan jadwal keberangkatan favorit Anda.
+            Pesan tiket kereta api secara online. Cepat, mudah, dan aman. Temukan jadwal
+            keberangkatan favorit Anda.
           </p>
           <div class="mt-8 flex justify-center gap-4">
             <template v-if="user">
@@ -45,10 +48,10 @@
                 size="lg"
                 class="cursor-pointer px-8"
               >
-                <a :href="showSearch.url()">
+                <Link :href="showSearch.url()">
                   Pesan Tiket Sekarang
                   <ArrowRight class="ml-2 size-4" />
-                </a>
+                </Link>
               </Button>
             </template>
             <template v-else>
@@ -57,9 +60,7 @@
                 size="lg"
                 class="cursor-pointer px-8"
               >
-                <a href="/login">
-                  Masuk
-                </a>
+                <Link href="/login"> Masuk </Link>
               </Button>
               <Button
                 as-child
@@ -67,9 +68,7 @@
                 size="lg"
                 class="cursor-pointer px-8"
               >
-                <a href="/register">
-                  Daftar
-                </a>
+                <Link href="/register"> Daftar </Link>
               </Button>
             </template>
           </div>
@@ -88,62 +87,68 @@
     </section>
 
     <!-- Keunggulan Section -->
-    <section class="mx-auto max-w-6xl px-4 py-16">
-      <div class="mb-12 text-center">
-        <h2 class="text-2xl font-bold sm:text-3xl">Mengapa Memilih Kami?</h2>
-        <p class="text-muted-foreground mt-2">Kemudahan pemesanan tiket kereta dalam genggaman Anda</p>
-      </div>
-      <div class="grid gap-6 sm:grid-cols-3">
-        <Card
-          v-for="item in keunggulan"
-          :key="item.title"
-          class="text-center"
-        >
-          <CardContent class="pt-6">
-            <div class="bg-primary/10 mx-auto mb-4 flex size-12 items-center justify-center rounded-full">
-              <component
-                :is="item.icon"
-                class="text-primary size-6"
-              />
-            </div>
-            <h3 class="font-semibold">{{ item.title }}</h3>
-            <p class="text-muted-foreground mt-1 text-sm">{{ item.desc }}</p>
-          </CardContent>
-        </Card>
+    <section class="mx-auto flex h-dvh max-w-6xl items-center justify-center px-4 py-16">
+      <div>
+        <div class="mb-12 text-center">
+          <h2 class="text-2xl font-bold sm:text-3xl">Mengapa Memilih Kami?</h2>
+          <p class="text-muted-foreground mt-2">
+            Kemudahan pemesanan tiket kereta dalam genggaman Anda
+          </p>
+        </div>
+        <div class="grid gap-6 sm:grid-cols-3">
+          <Card
+            v-for="item in keunggulan"
+            :key="item.title"
+            class="text-center"
+          >
+            <CardContent class="pt-6">
+              <div
+                class="bg-primary/10 mx-auto mb-4 flex size-12 items-center justify-center rounded-full"
+              >
+                <component
+                  :is="item.icon"
+                  class="text-primary size-6"
+                />
+              </div>
+              <h3 class="font-semibold">{{ item.title }}</h3>
+              <p class="text-muted-foreground mt-1 text-sm">{{ item.desc }}</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </section>
 
     <!-- CTA Section -->
     <section class="bg-primary/5 border-y">
       <div class="mx-auto max-w-4xl px-4 py-16 text-center">
-        <h2 class="text-2xl font-bold sm:text-3xl">Siap Untuk Bepergian?</h2>
-        <p class="text-muted-foreground mt-3">
-          Pesan tiket kereta Anda sekarang dan nikmati perjalanan yang nyaman.
-        </p>
-        <div class="mt-8 flex justify-center gap-4">
-          <template v-if="user">
-            <Button
-              as-child
-              size="lg"
-              class="cursor-pointer px-8"
-            >
-              <a :href="showSearch.url()">
-                Pesan Tiket Sekarang
-                <ArrowRight class="ml-2 size-4" />
-              </a>
-            </Button>
-          </template>
-          <template v-else>
-            <Button
-              as-child
-              size="lg"
-              class="cursor-pointer px-8"
-            >
-              <a href="/login">
-                Masuk untuk Memesan
-              </a>
-            </Button>
-          </template>
+        <div>
+          <h2 class="text-2xl font-bold sm:text-3xl">Siap Untuk Bepergian?</h2>
+          <p class="text-muted-foreground mt-3">
+            Pesan tiket kereta Anda sekarang dan nikmati perjalanan yang nyaman.
+          </p>
+          <div class="mt-8 flex justify-center gap-4">
+            <template v-if="user">
+              <Button
+                as-child
+                size="lg"
+                class="cursor-pointer px-8"
+              >
+                <Link :href="showSearch.url()">
+                  Pesan Tiket Sekarang
+                  <ArrowRight class="ml-2 size-4" />
+                </Link>
+              </Button>
+            </template>
+            <template v-else>
+              <Button
+                as-child
+                size="lg"
+                class="cursor-pointer px-8"
+              >
+                <Link href="/login"> Masuk untuk Memesan </Link>
+              </Button>
+            </template>
+          </div>
         </div>
       </div>
     </section>

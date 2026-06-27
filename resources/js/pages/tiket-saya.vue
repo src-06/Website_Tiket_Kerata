@@ -109,7 +109,10 @@
             <span class="flex items-center gap-1"
               ><ArmchairIcon class="size-3" /> Kursi {{ t.kursi }}</span
             >
-            <span>{{ formatDate(t.jadwal.waktu_berangkat) }} {{ formatWaktu(t.jadwal.waktu_berangkat) }}</span>
+            <span
+              >{{ formatDate(t.jadwal.waktu_berangkat) }}
+              {{ formatWaktu(t.jadwal.waktu_berangkat) }}</span
+            >
             <span class="text-primary font-medium">{{ formatHarga(t.harga) }}</span>
           </div>
         </template>

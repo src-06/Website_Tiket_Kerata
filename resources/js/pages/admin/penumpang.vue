@@ -41,9 +41,7 @@
     const q = search.value.toLowerCase()
     return props.penumpangs.data.filter(
       p =>
-        p.nama.toLowerCase().includes(q) ||
-        p.email.toLowerCase().includes(q) ||
-        p.no_hp.includes(q)
+        p.nama.toLowerCase().includes(q) || p.email.toLowerCase().includes(q) || p.no_hp.includes(q)
     )
   })
 
@@ -188,12 +186,8 @@
           <div
             class="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs"
           >
-            <span class="flex items-center gap-1"
-              ><Mail class="size-3" /> {{ p.email }}</span
-            >
-            <span class="flex items-center gap-1"
-              ><Phone class="size-3" /> {{ p.no_hp }}</span
-            >
+            <span class="flex items-center gap-1"><Mail class="size-3" /> {{ p.email }}</span>
+            <span class="flex items-center gap-1"><Phone class="size-3" /> {{ p.no_hp }}</span>
             <span>Terdaftar {{ formatDate(p.created_at) }}</span>
           </div>
         </template>
