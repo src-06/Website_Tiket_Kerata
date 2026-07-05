@@ -1,8 +1,10 @@
 <script setup lang="ts">
+  import admin from "@/layouts/admin.vue"
   import { ref } from "vue"
+
+  defineOptions({ layout: admin })
+
   import { router } from "@inertiajs/vue3"
-  import keretaRoutes from "@/routes/kereta"
-  import { kereta as keretaList } from "@/routes"
   import { Input } from "@/components/ui/input"
   import { Label } from "@/components/ui/label"
   import {
@@ -29,12 +31,12 @@
 
   function submit() {
     if (isEdit) {
-      router.put(keretaRoutes.update.url({ kereta: props.kereta!.id_kereta }), {
+      router.put(`/admin/kereta/${props.kereta!.id_kereta}`, {
         nama_kereta: nama_kereta.value,
         kelas: kelas.value
       })
     } else {
-      router.post(keretaRoutes.store.url(), {
+      router.post("/admin/kereta", {
         nama_kereta: nama_kereta.value,
         kelas: kelas.value
       })
@@ -46,7 +48,7 @@
   <AdminFormLayout
     :icon="Train"
     title="Kereta"
-    :back-url="keretaList.url()"
+    back-url="/admin/kereta"
     :is-edit="isEdit"
     @submit="submit"
   >

@@ -45,7 +45,7 @@ class KeretaController extends Controller
 
         Kereta::create($validated);
 
-        return redirect()->route('kereta')->with('success', 'Kereta berhasil ditambahkan');
+        return redirect()->route('admin.kereta')->with('success', 'Kereta berhasil ditambahkan');
     }
 
     public function edit(Kereta $kereta)
@@ -64,13 +64,13 @@ class KeretaController extends Controller
 
         $kereta->update($validated);
 
-        return redirect()->route('kereta')->with('success', 'Kereta berhasil diubah');
+        return redirect()->route('admin.kereta')->with('success', 'Kereta berhasil diubah');
     }
 
     public function destroy(Kereta $kereta)
     {
         $kereta->delete();
 
-        return redirect()->route('kereta')->with('success', 'Kereta berhasil dihapus');
+        return redirect()->route('admin.kereta')->with('success', 'Kereta berhasil dihapus');
     }
 }

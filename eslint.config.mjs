@@ -9,10 +9,7 @@ export default tseslint.config(
   ...pluginVue.configs["flat/recommended"],
   {
     ignores: [
-      "node_modules/**",
-      "vendor/**",
-      "public/**",
-      "resources/js/components/**",
+      "resources/js/components/ui/**",
       "resources/js/actions/**",
       "resources/js/routes/**",
       "resources/js/wayfinder/**"
@@ -36,7 +33,8 @@ export default tseslint.config(
     },
     rules: {
       "vue/multi-word-component-names": "off",
-      "@typescript-eslint/no-explicit-any": "warn"
+      "@typescript-eslint/no-explicit-any": "warn",
+      "no-undef": "off"
     }
   },
   eslintConfigPrettier

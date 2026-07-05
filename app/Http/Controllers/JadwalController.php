@@ -35,6 +35,32 @@ class JadwalController extends Controller
         ]);
     }
 
+    public function daftarJadwal()
+    {
+        $jadwals = Jadwal::with(['kereta', 'stasiunAsal', 'stasiunTujuan'])
+            ->where('waktu_berangkat', '>=', now())
+            ->orderBy('waktu_berangkat')
+            ->paginate(10);
+
+        return Inertia::render('jadwal', [
+            'jadwals' => [
+                'data' => $jadwals->items(),
+                'meta' => [
+                    'current_page' => $jadwals->currentPage(),
+                    'last_page' => $jadwals->lastPage(),
+                    'from' => $jadwals->firstItem(),
+                    'to' => $jadwals->lastItem(),
+                    'total' => $jadwals->total(),
+                    'links' => $jadwals->linkCollection()->map(fn ($link) => [
+                        'url' => $link['url'],
+                        'label' => $link['label'],
+                        'active' => $link['active'],
+                    ]),
+                ],
+            ],
+        ]);
+    }
+
     public function create()
     {
         return Inertia::render('admin/jadwal-form', [
@@ -50,13 +76,13 @@ class JadwalController extends Controller
             'id_stasiun_asal' => 'required|exists:stasiun,id_stasiun',
             'id_stasiun_tujuan' => 'required|exists:stasiun,id_stasiun|different:id_stasiun_asal',
             'waktu_berangkat' => 'required|date',
-            'waktu_tiba' => 'required|date|after:waktu_berangkat',
+            'durasi_perjalanan' => 'required|integer|min:1|max:1440',
             'harga' => 'required|integer|min:0',
         ]);
 
         Jadwal::create($validated);
 
-        return redirect()->route('jadwal')->with('success', 'Jadwal berhasil ditambahkan');
+        return redirect()->route('admin.jadwal')->with('success', 'Jadwal berhasil ditambahkan');
     }
 
     public function edit(Jadwal $jadwal)
@@ -75,19 +101,19 @@ class JadwalController extends Controller
             'id_stasiun_asal' => 'required|exists:stasiun,id_stasiun',
             'id_stasiun_tujuan' => 'required|exists:stasiun,id_stasiun|different:id_stasiun_asal',
             'waktu_berangkat' => 'required|date',
-            'waktu_tiba' => 'required|date|after:waktu_berangkat',
+            'durasi_perjalanan' => 'required|integer|min:1|max:1440',
             'harga' => 'required|integer|min:0',
         ]);
 
         $jadwal->update($validated);
 
-        return redirect()->route('jadwal')->with('success', 'Jadwal berhasil diubah');
+        return redirect()->route('admin.jadwal')->with('success', 'Jadwal berhasil diubah');
     }
 
     public function destroy(Jadwal $jadwal)
     {
         $jadwal->delete();
 
-        return redirect()->route('jadwal')->with('success', 'Jadwal berhasil dihapus');
+        return redirect()->route('admin.jadwal')->with('success', 'Jadwal berhasil dihapus');
     }
 }

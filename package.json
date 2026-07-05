@@ -5,10 +5,10 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier --check .",
-    "format:fix": "prettier --write ."
+    "lint": "eslint ./resources",
+    "lint:fix": "eslint ./resources --fix",
+    "format": "prettier --check ./resources",
+    "format:fix": "prettier --write ./resources"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

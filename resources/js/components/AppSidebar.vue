@@ -1,7 +1,19 @@
 <script setup lang="ts">
-  import { Train, Search, CalendarRange, Building2, Ticket } from "@lucide/vue"
-  import { tiket, jadwal, kereta, stasiun } from "@/routes"
+  import { computed } from "vue"
+  import { usePage, router } from "@inertiajs/vue3"
+  import {
+    Train,
+    Search,
+    Ticket,
+    LogOut,
+    LogIn,
+    UserPlus,
+    LayoutDashboard,
+    CalendarRange,
+    User
+  } from "@lucide/vue"
   import { home } from "@/routes"
+  import { showSearch } from "@/routes/jadwal"
   import {
     Sidebar,
     SidebarContent,
@@ -17,7 +29,33 @@
   import { Link } from "@inertiajs/vue3"
   import { useTheme } from "@/composables/useTheme"
   import { Moon, Sun } from "@lucide/vue"
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+  } from "@/components/ui/dropdown-menu"
+  import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+
   const { isDark, toggle } = useTheme()
+  const page = usePage()
+  const user = computed(() => page.props.auth?.user)
+  const isAdmin = computed(() => user.value?.role === "admin")
+
+  function logout() {
+    router.post("/logout")
+  }
+
+  function getInitials(name: string) {
+    return name
+      .split(" ")
+      .map(n => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2)
+  }
 </script>
 
 <template>
@@ -49,7 +87,7 @@
       </SidebarMenu>
     </SidebarHeader>
     <SidebarContent>
-      <SidebarGroup>
+      <SidebarGroup v-if="user">
         <SidebarGroupLabel>Pemesanan</SidebarGroupLabel>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -57,7 +95,7 @@
               as-child
               tooltip="Cari Tiket"
             >
-              <Link :href="home.url()">
+              <Link :href="showSearch.url()">
                 <Search />
                 <span>Cari Tiket</span>
               </Link>
@@ -66,26 +104,15 @@
         </SidebarMenu>
       </SidebarGroup>
       <SidebarSeparator />
-      <SidebarGroup>
-        <SidebarGroupLabel>Data Master</SidebarGroupLabel>
+      <SidebarGroup v-if="user">
+        <SidebarGroupLabel>Menu</SidebarGroupLabel>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              as-child
-              tooltip="Daftar Tiket"
-            >
-              <Link :href="tiket.url()">
-                <Ticket />
-                <span>Daftar Tiket</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child
               tooltip="Daftar Jadwal"
             >
-              <Link :href="jadwal.url()">
+              <Link href="/jadwal">
                 <CalendarRange />
                 <span>Daftar Jadwal</span>
               </Link>
@@ -94,22 +121,11 @@
           <SidebarMenuItem>
             <SidebarMenuButton
               as-child
-              tooltip="Daftar Kereta"
+              tooltip="Tiket Saya"
             >
-              <Link :href="kereta.url()">
-                <Train />
-                <span>Daftar Kereta</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              as-child
-              tooltip="Daftar Stasiun"
-            >
-              <Link :href="stasiun.url()">
-                <Building2 />
-                <span>Daftar Stasiun</span>
+              <Link href="/tiket-saya">
+                <Ticket />
+                <span>Tiket Saya</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -118,6 +134,80 @@
     </SidebarContent>
     <SidebarFooter>
       <SidebarMenu>
+        <SidebarMenuItem v-if="user">
+          <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+              <SidebarMenuButton
+                size="lg"
+                tooltip="Profil"
+              >
+                <Avatar class="size-8">
+                  <AvatarFallback class="bg-primary/10 text-primary text-xs font-semibold">
+                    {{ getInitials(user.nama) }}
+                  </AvatarFallback>
+                </Avatar>
+                <div class="flex flex-col gap-0.5 text-left leading-none">
+                  <span class="font-medium">{{ user.nama }}</span>
+                  <span class="text-muted-foreground text-xs">{{ user.email }}</span>
+                </div>
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side="top"
+              class="w-56"
+            >
+              <DropdownMenuLabel>
+                <div class="flex flex-col space-y-1">
+                  <p class="text-sm font-medium">{{ user.nama }}</p>
+                  <p class="text-muted-foreground text-xs">{{ user.email }}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                v-if="isAdmin"
+                as-child
+              >
+                <Link href="/admin/dashboard">
+                  <LayoutDashboard class="mr-2 size-4" />
+                  <span>Dashboard Admin</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem as-child>
+                <Link href="/profile">
+                  <User class="mr-2 size-4" />
+                  <span>Profil Saya</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem @click="logout">
+                <LogOut class="mr-2 size-4" />
+                <span>Keluar</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SidebarMenuItem>
+        <SidebarMenuItem v-else>
+          <SidebarMenuButton
+            as-child
+            tooltip="Masuk"
+          >
+            <Link href="/login">
+              <LogIn />
+              <span>Masuk</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem v-if="!user">
+          <SidebarMenuButton
+            as-child
+            tooltip="Daftar"
+          >
+            <Link href="/register">
+              <UserPlus />
+              <span>Daftar</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton
             tooltip="Ganti tema"

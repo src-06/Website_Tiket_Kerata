@@ -1,14 +1,24 @@
 <script setup lang="ts">
-  import { ref, watch } from "vue"
+  import { ref, computed, watch } from "vue"
   import { router, usePage } from "@inertiajs/vue3"
   import { simpan } from "@/routes/booking"
   import { Button } from "@/components/ui/button"
-  import { Input } from "@/components/ui/input"
-  import { Label } from "@/components/ui/label"
   import { Badge } from "@/components/ui/badge"
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
   import { Separator } from "@/components/ui/separator"
-  import { Train, User, Mail, Phone, ArmchairIcon, ArrowRight, MapPin, Clock } from "@lucide/vue"
+  import { Input } from "@/components/ui/input"
+  import { Label } from "@/components/ui/label"
+  import {
+    Train,
+    User,
+    Mail,
+    Phone,
+    ArmchairIcon,
+    ArrowRight,
+    MapPin,
+    Clock,
+    CalendarRange
+  } from "@lucide/vue"
   import { useFormat } from "@/composables/useFormat"
 
   const page = usePage()
@@ -20,17 +30,24 @@
       stasiun_asal: { nama_stasiun: string; kota: string }
       stasiun_tujuan: { nama_stasiun: string; kota: string }
       waktu_berangkat: string
-      waktu_tiba: string
+      durasi_perjalanan: number
       harga: number
     }
+    jadwalLainnya: {
+      id_jadwal: number
+      kereta: { nama_kereta: string; kelas: string }
+      waktu_berangkat: string
+      durasi_perjalanan: number
+      harga: number
+    }[]
     kursiTerpakai: string[]
     semuaKursi: string[]
+    user: { id_penumpang: number; nama: string; email: string; no_hp: string }
   }>()
 
-  const nama = ref("")
-  const email = ref("")
-  const no_hp = ref("")
-  const kursi = ref("")
+  const MAX_KURSI = 4
+  const kursiDipilih = ref<string[]>([])
+  const waktuBerangkatCustom = ref("")
   const errors = ref<Record<string, string>>({})
 
   watch(
@@ -45,29 +62,57 @@
 
   const { harga: formatHarga, waktu: formatWaktu } = useFormat()
 
-  function pilihKursi(k: string) {
+  const totalHarga = computed(() => props.jadwal.harga * kursiDipilih.value.length)
+
+  function estimasiTiba(waktuBerangkat: string, durasi: number) {
+    const d = new Date(waktuBerangkat)
+    d.setMinutes(d.getMinutes() + durasi)
+    return formatWaktu(d.toISOString())
+  }
+
+  function formatDurasi(menit: number) {
+    const j = Math.floor(menit / 60)
+    const m = menit % 60
+    if (j > 0 && m > 0) return `${j}j ${m}m`
+    if (j > 0) return `${j} jam`
+    return `${m} menit`
+  }
+
+  function toggleKursi(k: string) {
     if (props.kursiTerpakai.includes(k)) return
-    kursi.value = k
+
+    const idx = kursiDipilih.value.indexOf(k)
+    if (idx >= 0) {
+      kursiDipilih.value.splice(idx, 1)
+    } else if (kursiDipilih.value.length < MAX_KURSI) {
+      kursiDipilih.value.push(k)
+    }
+  }
+
+  function pilihJadwal(idJadwal: number) {
+    router.visit(`/booking/${idJadwal}`, { preserveScroll: true })
   }
 
   function handleSimpan() {
     errors.value = {}
 
-    if (!nama.value) errors.value.nama = "Nama harus diisi"
-    if (!email.value) errors.value.email = "Email harus diisi"
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value))
-      errors.value.email = "Format email tidak valid"
-    if (!no_hp.value) errors.value.no_hp = "No HP harus diisi"
-    if (!kursi.value) errors.value.kursi = "Pilih kursi terlebih dahulu"
+    if (kursiDipilih.value.length === 0) {
+      errors.value.kursi = "Pilih minimal 1 kursi"
+    }
+
+    if (waktuBerangkatCustom.value) {
+      const selectedDate = new Date(waktuBerangkatCustom.value)
+      if (selectedDate <= new Date()) {
+        errors.value.waktu_berangkat_custom = "Waktu berangkat harus setelah sekarang"
+      }
+    }
 
     if (Object.keys(errors.value).length > 0) return
 
     router.post(simpan.url(), {
       id_jadwal: props.jadwal.id_jadwal,
-      nama: nama.value,
-      email: email.value,
-      no_hp: no_hp.value,
-      kursi: kursi.value
+      kursi: kursiDipilih.value,
+      waktu_berangkat_custom: waktuBerangkatCustom.value || null
     })
   }
 </script>
@@ -86,68 +131,63 @@
             </CardTitle>
           </CardHeader>
           <CardContent class="space-y-4">
-            <div class="space-y-2">
-              <Label for="nama">Nama Lengkap</Label>
-              <div class="relative">
-                <User
-                  class="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2"
-                />
-                <Input
-                  id="nama"
-                  v-model="nama"
-                  placeholder="Masukkan nama lengkap"
-                  class="pl-9"
-                />
+            <div class="flex items-center gap-3">
+              <User class="text-muted-foreground size-4" />
+              <div>
+                <p class="text-muted-foreground text-xs">Nama Lengkap</p>
+                <p class="font-medium">{{ user.nama }}</p>
               </div>
-              <p
-                v-if="errors.nama"
-                class="text-destructive text-xs"
-              >
-                {{ errors.nama }}
-              </p>
             </div>
-
-            <div class="space-y-2">
-              <Label for="email">Email</Label>
-              <div class="relative">
-                <Mail
-                  class="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2"
-                />
-                <Input
-                  id="email"
-                  v-model="email"
-                  type="email"
-                  placeholder="Masukkan email"
-                  class="pl-9"
-                />
+            <div class="flex items-center gap-3">
+              <Mail class="text-muted-foreground size-4" />
+              <div>
+                <p class="text-muted-foreground text-xs">Email</p>
+                <p class="font-medium">{{ user.email }}</p>
               </div>
-              <p
-                v-if="errors.email"
-                class="text-destructive text-xs"
-              >
-                {{ errors.email }}
-              </p>
             </div>
-
-            <div class="space-y-2">
-              <Label for="no_hp">No. Handphone</Label>
-              <div class="relative">
-                <Phone
-                  class="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2"
-                />
-                <Input
-                  id="no_hp"
-                  v-model="no_hp"
-                  placeholder="Masukkan no handphone"
-                  class="pl-9"
-                />
+            <div class="flex items-center gap-3">
+              <Phone class="text-muted-foreground size-4" />
+              <div>
+                <p class="text-muted-foreground text-xs">No. Handphone</p>
+                <p class="font-medium">{{ user.no_hp }}</p>
               </div>
-              <p
-                v-if="errors.no_hp"
-                class="text-destructive text-xs"
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card
+          v-if="jadwalLainnya.length > 0"
+          class="mt-6"
+        >
+          <CardHeader>
+            <CardTitle class="flex items-center gap-2">
+              <CalendarRange class="size-5" />
+              Jadwal Lainnya
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="space-y-2">
+              <button
+                v-for="j in jadwalLainnya"
+                :key="j.id_jadwal"
+                type="button"
+                class="flex w-full cursor-pointer items-center justify-between rounded-lg border p-3 text-left transition-all hover:border-primary/50 hover:bg-primary/5"
+                @click="pilihJadwal(j.id_jadwal)"
               >
-                {{ errors.no_hp }}
-              </p>
+                <div class="flex items-center gap-3">
+                  <Train class="text-muted-foreground size-4" />
+                  <div>
+                    <p class="text-sm font-medium">{{ j.kereta.nama_kereta }}</p>
+                    <p class="text-muted-foreground text-xs">{{ j.kereta.kelas }}</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-medium">
+                    {{ formatWaktu(j.waktu_berangkat) }} - {{ estimasiTiba(j.waktu_berangkat, j.durasi_perjalanan) }}
+                  </p>
+                  <p class="text-primary text-xs font-semibold">{{ formatHarga(j.harga) }}</p>
+                </div>
+              </button>
             </div>
           </CardContent>
         </Card>
@@ -157,6 +197,12 @@
             <CardTitle class="flex items-center gap-2">
               <ArmchairIcon class="size-5" />
               Pilih Kursi
+              <Badge
+                variant="secondary"
+                class="ml-auto"
+              >
+                {{ kursiDipilih.length }} / {{ MAX_KURSI }}
+              </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -170,11 +216,11 @@
                   'flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-all',
                   kursiTerpakai.includes(k)
                     ? 'bg-muted/50 text-muted-foreground/60 cursor-not-allowed line-through'
-                    : kursi === k
+                    : kursiDipilih.includes(k)
                       ? 'bg-primary text-primary-foreground scale-110 shadow-md'
                       : 'bg-secondary hover:bg-secondary/80 hover:scale-105'
                 ]"
-                @click="pilihKursi(k)"
+                @click="toggleKursi(k)"
               >
                 {{ k }}
               </button>
@@ -196,6 +242,42 @@
             >
               {{ errors.kursi }}
             </p>
+          </CardContent>
+        </Card>
+
+        <Card class="mt-6">
+          <CardHeader>
+            <CardTitle class="flex items-center gap-2">
+              <Clock class="size-5" />
+              Waktu Keberangkatan
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-3">
+            <div class="rounded-lg border border-dashed p-3 text-sm">
+              <p class="text-muted-foreground">Jadwal default:</p>
+              <p class="font-medium">
+                {{ formatWaktu(jadwal.waktu_berangkat) }} - {{ estimasiTiba(jadwal.waktu_berangkat, jadwal.durasi_perjalanan) }}
+              </p>
+              <p class="text-muted-foreground text-xs">(~{{ formatDurasi(jadwal.durasi_perjalanan) }})</p>
+            </div>
+            <div class="space-y-2">
+              <Label for="waktu_custom">Atau atur waktu sendiri (opsional)</Label>
+              <Input
+                id="waktu_custom"
+                v-model="waktuBerangkatCustom"
+                type="datetime-local"
+                :min="new Date().toISOString().slice(0, 16)"
+              />
+              <p
+                v-if="errors.waktu_berangkat_custom"
+                class="text-destructive text-xs"
+              >
+                {{ errors.waktu_berangkat_custom }}
+              </p>
+              <p class="text-muted-foreground text-xs">
+                Kosongkan jika ingin menggunakan jadwal default
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -226,32 +308,65 @@
             <div class="flex items-center gap-2 text-sm">
               <ArrowRight class="size-4" />
               <span
-                >{{ jadwal.stasiun_tujuan.nama_stasiun }} ({{ jadwal.stasiun_tujuan.kota }})</span
+                >{{ jadwal.stasiun_tujuan.nama_stasiun }} ({{
+                  jadwal.stasiun_tujuan.kota
+                }})</span
               >
             </div>
             <Separator />
             <div class="flex items-center gap-2 text-sm">
               <Clock class="size-4" />
-              <span
-                >{{ formatWaktu(jadwal.waktu_berangkat) }} -
-                {{ formatWaktu(jadwal.waktu_tiba) }}</span
-              >
+              <span v-if="waktuBerangkatCustom">
+                <span class="text-muted-foreground line-through">{{
+                  formatWaktu(jadwal.waktu_berangkat)
+                }}</span>
+                <span class="ml-1 font-medium">{{ formatWaktu(waktuBerangkatCustom) }}</span>
+              </span>
+              <span v-else>
+                {{ formatWaktu(jadwal.waktu_berangkat) }} -
+                {{ estimasiTiba(jadwal.waktu_berangkat, jadwal.durasi_perjalanan) }}
+              </span>
             </div>
             <Separator />
-            <div class="flex items-center gap-2 text-sm">
-              <ArmchairIcon class="size-4" />
-              <span
-                >Kursi: <strong>{{ kursi || "-" }}</strong></span
+            <div class="text-sm">
+              <p class="mb-1 flex items-center gap-1 font-medium">
+                <ArmchairIcon class="size-4" /> Kursi Dipilih
+              </p>
+              <div
+                v-if="kursiDipilih.length > 0"
+                class="flex flex-wrap gap-1"
               >
+                <Badge
+                  v-for="k in kursiDipilih"
+                  :key="k"
+                  variant="secondary"
+                >
+                  {{ k }}
+                </Badge>
+              </div>
+              <p
+                v-else
+                class="text-muted-foreground"
+              >
+                Belum ada kursi dipilih
+              </p>
             </div>
             <Separator />
-            <div class="flex items-center justify-between">
-              <span class="text-sm">Total</span>
-              <span class="text-primary text-xl font-bold">{{ formatHarga(jadwal.harga) }}</span>
+            <div class="text-sm">
+              <p class="text-muted-foreground">
+                {{ kursiDipilih.length }} x {{ formatHarga(jadwal.harga) }}
+              </p>
+              <div class="flex items-center justify-between">
+                <span class="font-medium">Total</span>
+                <span class="text-primary text-xl font-bold">{{
+                  formatHarga(totalHarga)
+                }}</span>
+              </div>
             </div>
             <Button
               class="mt-2 w-full cursor-pointer"
               size="lg"
+              :disabled="kursiDipilih.length === 0"
               @click="handleSimpan"
             >
               Lanjut ke Pembayaran

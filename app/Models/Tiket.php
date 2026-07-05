@@ -5,22 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Table('tiket', key: 'id_tiket')]
-#[Fillable(['id_penumpang', 'id_jadwal', 'kursi', 'harga', 'status_pembayaran'])]
+#[Fillable(['id_jadwal', 'total_harga', 'status_pembayaran', 'waktu_berangkat_custom'])]
 class Tiket extends Model
 {
-    public function penumpang()
-    {
-        return $this->belongsTo(Penumpang::class, 'id_penumpang');
-    }
-
-    public function jadwal()
+    public function jadwal(): BelongsTo
     {
         return $this->belongsTo(Jadwal::class, 'id_jadwal');
     }
 
-    public function pembayaran()
+    public function detailTikets(): HasMany
+    {
+        return $this->hasMany(DetailTiket::class, 'id_tiket');
+    }
+
+    public function pembayaran(): HasOne
     {
         return $this->hasOne(Pembayaran::class, 'id_tiket');
     }

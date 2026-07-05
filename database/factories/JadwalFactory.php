@@ -20,15 +20,12 @@ class JadwalFactory extends Factory
             $stasiunIds = Stasiun::inRandomOrder()->pluck('id_stasiun')->take(2)->values();
         }
 
-        $berangkat = fake()->dateTimeBetween('now', '+7 days');
-        $tiba = (clone $berangkat)->modify('+'.fake()->numberBetween(1, 8).' hours');
-
         return [
             'id_kereta' => $kereta->id_kereta,
             'id_stasiun_asal' => $stasiunIds[0],
             'id_stasiun_tujuan' => $stasiunIds[1],
-            'waktu_berangkat' => $berangkat,
-            'waktu_tiba' => $tiba,
+            'waktu_berangkat' => fake()->dateTimeBetween('now', '+7 days'),
+            'durasi_perjalanan' => fake()->numberBetween(60, 480),
             'harga' => fake()->numberBetween(80000, 500000),
         ];
     }

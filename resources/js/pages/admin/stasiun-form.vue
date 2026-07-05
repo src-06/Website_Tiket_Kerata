@@ -1,8 +1,10 @@
 <script setup lang="ts">
+  import admin from "@/layouts/admin.vue"
   import { ref } from "vue"
+
+  defineOptions({ layout: admin })
+
   import { router } from "@inertiajs/vue3"
-  import stasiunRoutes from "@/routes/stasiun"
-  import { stasiun as stasiunList } from "@/routes"
   import { Input } from "@/components/ui/input"
   import { Label } from "@/components/ui/label"
   import { MapPin } from "@lucide/vue"
@@ -22,12 +24,12 @@
 
   function submit() {
     if (isEdit) {
-      router.put(stasiunRoutes.update.url({ stasiun: props.stasiun!.id_stasiun }), {
+      router.put(`/admin/stasiun/${props.stasiun!.id_stasiun}`, {
         nama_stasiun: nama_stasiun.value,
         kota: kota.value
       })
     } else {
-      router.post(stasiunRoutes.store.url(), {
+      router.post("/admin/stasiun", {
         nama_stasiun: nama_stasiun.value,
         kota: kota.value
       })
@@ -39,7 +41,7 @@
   <AdminFormLayout
     :icon="MapPin"
     title="Stasiun"
-    :back-url="stasiunList.url()"
+    back-url="/admin/stasiun"
     :is-edit="isEdit"
     @submit="submit"
   >

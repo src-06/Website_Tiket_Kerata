@@ -45,7 +45,7 @@ class StasiunController extends Controller
 
         Stasiun::create($validated);
 
-        return redirect()->route('stasiun')->with('success', 'Stasiun berhasil ditambahkan');
+        return redirect()->route('admin.stasiun')->with('success', 'Stasiun berhasil ditambahkan');
     }
 
     public function edit(Stasiun $stasiun)
@@ -64,13 +64,13 @@ class StasiunController extends Controller
 
         $stasiun->update($validated);
 
-        return redirect()->route('stasiun')->with('success', 'Stasiun berhasil diubah');
+        return redirect()->route('admin.stasiun')->with('success', 'Stasiun berhasil diubah');
     }
 
     public function destroy(Stasiun $stasiun)
     {
         $stasiun->delete();
 
-        return redirect()->route('stasiun')->with('success', 'Stasiun berhasil dihapus');
+        return redirect()->route('admin.stasiun')->with('success', 'Stasiun berhasil dihapus');
     }
 }

@@ -6,22 +6,27 @@
   import { Badge } from "@/components/ui/badge"
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
   import { Separator } from "@/components/ui/separator"
-  import { Train, MapPin, Clock, Wallet, CreditCard, QrCode, CheckCircle } from "@lucide/vue"
+  import { Train, MapPin, Clock, Wallet, CreditCard, QrCode, CheckCircle, ArmchairIcon } from "@lucide/vue"
   import { useFormat } from "@/composables/useFormat"
 
   const props = defineProps<{
     tiket: {
       id_tiket: number
-      kursi: string
-      harga: number
+      total_harga: number
       status_pembayaran: string
-      penumpang: { nama: string; email: string; no_hp: string }
+      waktu_berangkat_custom: string | null
+      detail_tikets: {
+        id_detail_kursi: number
+        nama_kursi: string
+        harga_satuan: number
+        penumpang: { nama: string; email: string; no_hp: string }
+      }[]
       jadwal: {
         kereta: { nama_kereta: string; kelas: string }
         stasiun_asal: { nama_stasiun: string; kota: string }
         stasiun_tujuan: { nama_stasiun: string; kota: string }
         waktu_berangkat: string
-        waktu_tiba: string
+        durasi_perjalanan: number
       }
     }
   }>()
@@ -29,6 +34,12 @@
   const metodeBayar = ref("")
   const loading = ref(false)
   const { harga: formatHarga, waktu: formatWaktu } = useFormat()
+
+  function estimasiTiba(waktuBerangkat: string, durasi: number) {
+    const d = new Date(waktuBerangkat)
+    d.setMinutes(d.getMinutes() + durasi)
+    return formatWaktu(d.toISOString())
+  }
 
   function bayar() {
     if (!metodeBayar.value) return
@@ -125,20 +136,45 @@
             </div>
             <div class="flex items-center gap-2 text-sm">
               <Clock class="size-4" />
-              <span
-                >{{ formatWaktu(tiket.jadwal.waktu_berangkat) }} -
-                {{ formatWaktu(tiket.jadwal.waktu_tiba) }}</span
-              >
+              <span v-if="tiket.waktu_berangkat_custom">
+                <span class="text-muted-foreground line-through">{{
+                  formatWaktu(tiket.jadwal.waktu_berangkat)
+                }}</span>
+                <span class="ml-1 font-medium">{{
+                  formatWaktu(tiket.waktu_berangkat_custom)
+                }}</span>
+              </span>
+              <span v-else>
+                {{ formatWaktu(tiket.jadwal.waktu_berangkat) }} -
+                {{ estimasiTiba(tiket.jadwal.waktu_berangkat, tiket.jadwal.durasi_perjalanan) }}
+              </span>
             </div>
             <Separator />
             <div class="text-sm">
-              <p><strong>Nama:</strong> {{ tiket.penumpang.nama }}</p>
-              <p><strong>Kursi:</strong> {{ tiket.kursi }}</p>
+              <p class="mb-2 font-medium">Penumpang & Kursi</p>
+              <div class="space-y-2">
+                <div
+                  v-for="(d, i) in tiket.detail_tikets"
+                  :key="d.id_detail_kursi"
+                  class="flex items-center justify-between rounded-md bg-secondary/50 px-3 py-2"
+                >
+                  <div class="flex items-center gap-2">
+                    <span class="text-muted-foreground text-xs font-medium">{{ i + 1 }}.</span>
+                    <span>{{ d.penumpang.nama }}</span>
+                  </div>
+                  <Badge variant="outline">
+                    <ArmchairIcon class="mr-1 size-3" />
+                    {{ d.nama_kursi }}
+                  </Badge>
+                </div>
+              </div>
             </div>
             <Separator />
             <div class="flex items-center justify-between">
               <span class="text-sm">Total</span>
-              <span class="text-primary text-xl font-bold">{{ formatHarga(tiket.harga) }}</span>
+              <span class="text-primary text-xl font-bold">{{
+                formatHarga(tiket.total_harga)
+              }}</span>
             </div>
             <Button
               class="mt-2 w-full cursor-pointer"

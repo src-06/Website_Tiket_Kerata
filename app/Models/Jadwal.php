@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 #[Table('jadwal', key: 'id_jadwal')]
-#[Fillable(['id_kereta', 'id_stasiun_asal', 'id_stasiun_tujuan', 'waktu_berangkat', 'waktu_tiba', 'harga'])]
+#[Fillable(['id_kereta', 'id_stasiun_asal', 'id_stasiun_tujuan', 'waktu_berangkat', 'durasi_perjalanan', 'harga'])]
 class Jadwal extends Model
 {
     use HasFactory;
@@ -17,8 +17,13 @@ class Jadwal extends Model
     {
         return [
             'waktu_berangkat' => 'datetime',
-            'waktu_tiba' => 'datetime',
+            'durasi_perjalanan' => 'integer',
         ];
+    }
+
+    public function waktuTibaEstimasi()
+    {
+        return $this->waktu_berangkat->copy()->addMinutes($this->durasi_perjalanan);
     }
 
     public function kereta()

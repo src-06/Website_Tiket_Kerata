@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailTiket;
 use App\Models\Jadwal;
-use App\Models\Penumpang;
 use App\Models\Tiket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,13 +11,22 @@ use Inertia\Inertia;
 
 class PemesananController extends Controller
 {
-    public function formBooking(Jadwal $jadwal)
+    public function formBooking(Request $request, Jadwal $jadwal)
     {
         $jadwal->load(['kereta', 'stasiunAsal', 'stasiunTujuan']);
 
-        $kursiTerpakai = Tiket::where('id_jadwal', $jadwal->id_jadwal)
-            ->pluck('kursi')
-            ->toArray();
+        $kursiTerpakai = DetailTiket::whereHas('tiket', function ($q) use ($jadwal) {
+            $q->where('id_jadwal', $jadwal->id_jadwal);
+        })->pluck('nama_kursi')->toArray();
+
+        $jadwalLainnya = Jadwal::with(['kereta'])
+            ->where('id_stasiun_asal', $jadwal->id_stasiun_asal)
+            ->where('id_stasiun_tujuan', $jadwal->id_stasiun_tujuan)
+            ->where('id_jadwal', '!=', $jadwal->id_jadwal)
+            ->where('waktu_berangkat', '>', now())
+            ->orderBy('waktu_berangkat')
+            ->limit(10)
+            ->get();
 
         $semuaKursi = [];
         $baris = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -29,8 +38,15 @@ class PemesananController extends Controller
 
         return Inertia::render('booking', [
             'jadwal' => $jadwal,
+            'jadwalLainnya' => $jadwalLainnya,
             'kursiTerpakai' => $kursiTerpakai,
             'semuaKursi' => $semuaKursi,
+            'user' => $request->user() ? [
+                'id_penumpang' => $request->user()->id_penumpang,
+                'nama' => $request->user()->nama,
+                'email' => $request->user()->email,
+                'no_hp' => $request->user()->no_hp,
+            ] : null,
         ]);
     }
 
@@ -38,38 +54,42 @@ class PemesananController extends Controller
     {
         $validated = $request->validate([
             'id_jadwal' => 'required|exists:jadwal,id_jadwal',
-            'nama' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'no_hp' => 'required|string|max:20',
-            'kursi' => 'required|string|max:3',
+            'kursi' => 'required|array|min:1|max:4',
+            'kursi.*' => 'required|string|max:3',
+            'waktu_berangkat_custom' => 'nullable|date|after:now',
         ]);
 
         $jadwal = Jadwal::findOrFail($validated['id_jadwal']);
 
-        $kursiTerpakai = Tiket::where('id_jadwal', $jadwal->id_jadwal)
-            ->pluck('kursi')
-            ->toArray();
+        $kursiTerpakai = DetailTiket::whereHas('tiket', function ($q) use ($jadwal) {
+            $q->where('id_jadwal', $jadwal->id_jadwal);
+        })->pluck('nama_kursi')->toArray();
 
-        if (in_array($validated['kursi'], $kursiTerpakai)) {
-            return back()->withErrors(['kursi' => 'Kursi sudah dipesan']);
+        $terpakai = array_intersect($validated['kursi'], $kursiTerpakai);
+        if (! empty($terpakai)) {
+            return back()->withErrors(['kursi' => 'Kursi '.implode(', ', $terpakai).' sudah dipesan']);
         }
 
-        DB::transaction(function () use ($validated, $jadwal, &$tiket) {
-            $penumpang = Penumpang::create([
-                'nama' => $validated['nama'],
-                'email' => $validated['email'],
-                'no_hp' => $validated['no_hp'],
-            ]);
+        $totalHarga = $jadwal->harga * count($validated['kursi']);
 
+        return DB::transaction(function () use ($validated, $jadwal, $totalHarga, $request) {
             $tiket = Tiket::create([
-                'id_penumpang' => $penumpang->id_penumpang,
                 'id_jadwal' => $jadwal->id_jadwal,
-                'kursi' => $validated['kursi'],
-                'harga' => $jadwal->harga,
+                'total_harga' => $totalHarga,
                 'status_pembayaran' => 'Belum Lunas',
+                'waktu_berangkat_custom' => $validated['waktu_berangkat_custom'] ?? null,
             ]);
-        });
 
-        return redirect()->route('pembayaran', $tiket->id_tiket);
+            foreach ($validated['kursi'] as $kursi) {
+                DetailTiket::create([
+                    'id_tiket' => $tiket->id_tiket,
+                    'id_penumpang' => $request->user()->id_penumpang,
+                    'nama_kursi' => $kursi,
+                    'harga_satuan' => $jadwal->harga,
+                ]);
+            }
+
+            return redirect()->route('pembayaran', $tiket->id_tiket);
+        });
     }
 }

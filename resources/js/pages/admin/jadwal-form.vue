@@ -1,8 +1,10 @@
 <script setup lang="ts">
+  import admin from "@/layouts/admin.vue"
   import { ref } from "vue"
+
+  defineOptions({ layout: admin })
+
   import { router } from "@inertiajs/vue3"
-  import jadwalRoutes from "@/routes/jadwal"
-  import { jadwal as jadwalList } from "@/routes"
   import { Input } from "@/components/ui/input"
   import { Label } from "@/components/ui/label"
   import {
@@ -22,7 +24,7 @@
       id_stasiun_asal: number
       id_stasiun_tujuan: number
       waktu_berangkat: string
-      waktu_tiba: string
+      durasi_perjalanan: number
       harga: number
     }
     keretas: { id_kereta: number; nama_kereta: string; kelas: string }[]
@@ -42,7 +44,7 @@
   const id_stasiun_asal = ref(props.jadwal ? String(props.jadwal.id_stasiun_asal) : "")
   const id_stasiun_tujuan = ref(props.jadwal ? String(props.jadwal.id_stasiun_tujuan) : "")
   const waktu_berangkat = ref(props.jadwal ? toDatetimeLocal(props.jadwal.waktu_berangkat) : "")
-  const waktu_tiba = ref(props.jadwal ? toDatetimeLocal(props.jadwal.waktu_tiba) : "")
+  const durasi_perjalanan = ref(props.jadwal ? String(props.jadwal.durasi_perjalanan) : "60")
   const harga = ref(props.jadwal ? String(props.jadwal.harga) : "")
 
   function submit() {
@@ -51,14 +53,14 @@
       id_stasiun_asal: Number(id_stasiun_asal.value),
       id_stasiun_tujuan: Number(id_stasiun_tujuan.value),
       waktu_berangkat: waktu_berangkat.value,
-      waktu_tiba: waktu_tiba.value,
+      durasi_perjalanan: Number(durasi_perjalanan.value),
       harga: Number(harga.value)
     }
 
     if (isEdit) {
-      router.put(jadwalRoutes.update.url({ jadwal: props.jadwal!.id_jadwal }), payload)
+      router.put(`/admin/jadwal/${props.jadwal!.id_jadwal}`, payload)
     } else {
-      router.post(jadwalRoutes.store.url(), payload)
+      router.post("/admin/jadwal", payload)
     }
   }
 </script>
@@ -67,7 +69,7 @@
   <AdminFormLayout
     :icon="Clock"
     title="Jadwal"
-    :back-url="jadwalList.url()"
+    back-url="/admin/jadwal"
     :is-edit="isEdit"
     @submit="submit"
   >
@@ -144,12 +146,16 @@
         />
       </div>
       <div class="space-y-2">
-        <Label for="waktu_tiba">Waktu Tiba</Label>
+        <Label for="durasi_perjalanan">Durasi Perjalanan (menit)</Label>
         <Input
-          id="waktu_tiba"
-          v-model="waktu_tiba"
-          type="datetime-local"
+          id="durasi_perjalanan"
+          v-model="durasi_perjalanan"
+          type="number"
+          min="1"
+          max="1440"
+          placeholder="Contoh: 60"
         />
+        <p class="text-muted-foreground text-xs">Estimasi waktu tiba = waktu berangkat + durasi</p>
       </div>
     </div>
 

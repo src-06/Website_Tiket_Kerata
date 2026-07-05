@@ -2,16 +2,32 @@
 
 namespace App\Models;
 
+use App\Enums\Role;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Table;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 #[Table('penumpang', key: 'id_penumpang')]
-#[Fillable(['nama', 'email', 'no_hp'])]
-class Penumpang extends Model
+#[Fillable(['nama', 'email', 'no_hp', 'password', 'role'])]
+#[Hidden(['password'])]
+class Penumpang extends Authenticatable
 {
-    public function tikets()
+    use HasFactory, Notifiable;
+
+    protected function casts(): array
     {
-        return $this->hasMany(Tiket::class, 'id_penumpang');
+        return [
+            'password' => 'hashed',
+            'role' => Role::class,
+        ];
+    }
+
+    public function detailTikets(): HasMany
+    {
+        return $this->hasMany(DetailTiket::class, 'id_penumpang');
     }
 }

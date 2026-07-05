@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { Link } from "@inertiajs/vue3"
-  import { home } from "@/routes"
   import { Button } from "@/components/ui/button"
   import { Badge } from "@/components/ui/badge"
   import { Separator } from "@/components/ui/separator"
@@ -11,8 +10,6 @@
     Clock,
     ArmchairIcon,
     User,
-    Mail,
-    Phone,
     CreditCard,
     Printer
   } from "@lucide/vue"
@@ -21,16 +18,22 @@
   defineProps<{
     tiket: {
       id_tiket: number
-      kursi: string
-      harga: number
+      id_jadwal: number
+      total_harga: number
       status_pembayaran: string
-      penumpang: { nama: string; email: string; no_hp: string }
+      waktu_berangkat_custom: string | null
+      detail_tikets: {
+        id_detail_kursi: number
+        nama_kursi: string
+        harga_satuan: number
+        penumpang: { nama: string; email: string; no_hp: string }
+      }[]
       jadwal: {
         kereta: { nama_kereta: string; kelas: string }
         stasiun_asal: { nama_stasiun: string; kota: string }
         stasiun_tujuan: { nama_stasiun: string; kota: string }
         waktu_berangkat: string
-        waktu_tiba: string
+        durasi_perjalanan: number
       }
       pembayaran: {
         id_pembayaran: number
@@ -42,6 +45,12 @@
   }>()
 
   const { harga: formatHarga, waktu: formatWaktu, tanggalLengkap } = useFormat()
+
+  function estimasiTiba(waktuBerangkat: string, durasi: number) {
+    const d = new Date(waktuBerangkat)
+    d.setMinutes(d.getMinutes() + durasi)
+    return formatWaktu(d.toISOString())
+  }
 
   function cetak() {
     window.print()
@@ -114,14 +123,22 @@
             Tanggal Keberangkatan
           </p>
           <p class="text-sm font-medium print:text-xs">
-            {{ tanggalLengkap(tiket.jadwal.waktu_berangkat) }}
+            {{
+              tiket.waktu_berangkat_custom
+                ? tanggalLengkap(tiket.waktu_berangkat_custom)
+                : tanggalLengkap(tiket.jadwal.waktu_berangkat)
+            }}
           </p>
         </div>
 
         <div class="grid grid-cols-3 items-center gap-3 text-center print:gap-0.5">
           <div>
             <p class="text-lg font-bold print:text-sm">
-              {{ formatWaktu(tiket.jadwal.waktu_berangkat) }}
+              {{
+                tiket.waktu_berangkat_custom
+                  ? formatWaktu(tiket.waktu_berangkat_custom)
+                  : formatWaktu(tiket.jadwal.waktu_berangkat)
+              }}
             </p>
             <p class="text-muted-foreground text-sm print:text-xs">
               {{ tiket.jadwal.stasiun_asal.nama_stasiun }}
@@ -138,7 +155,11 @@
           </div>
           <div>
             <p class="text-lg font-bold print:text-sm">
-              {{ formatWaktu(tiket.jadwal.waktu_tiba) }}
+              {{
+                tiket.waktu_berangkat_custom
+                  ? estimasiTiba(tiket.waktu_berangkat_custom, tiket.jadwal.durasi_perjalanan)
+                  : estimasiTiba(tiket.jadwal.waktu_berangkat, tiket.jadwal.durasi_perjalanan)
+              }}
             </p>
             <p class="text-muted-foreground text-sm print:text-xs">
               {{ tiket.jadwal.stasiun_tujuan.nama_stasiun }}
@@ -151,38 +172,36 @@
 
         <Separator class="print:hidden" />
 
-        <div class="grid grid-cols-2 gap-4 print:gap-1">
-          <div>
-            <p class="text-muted-foreground text-xs uppercase print:text-[10px]">Kursi</p>
-            <p class="flex items-center gap-1 font-bold print:text-sm">
-              <ArmchairIcon class="size-4 print:size-3" /> {{ tiket.kursi }}
-            </p>
-          </div>
-          <div>
-            <p class="text-muted-foreground text-xs uppercase print:text-[10px]">Total</p>
-            <p class="text-primary text-lg font-bold print:text-sm">
-              {{ formatHarga(tiket.harga) }}
-            </p>
+        <div>
+          <p class="text-muted-foreground mb-1 text-xs uppercase print:mb-0 print:text-[10px]">
+            Daftar Penumpang & Kursi
+          </p>
+          <div class="space-y-1 text-sm print:text-xs">
+            <div
+              v-for="(d, i) in tiket.detail_tikets"
+              :key="d.id_detail_kursi"
+              class="flex items-center justify-between rounded bg-secondary/30 px-2 py-1"
+            >
+              <div class="flex items-center gap-2">
+                <span class="text-muted-foreground">{{ i + 1 }}.</span>
+                <User class="size-3 print:size-2.5" />
+                <span>{{ d.penumpang.nama }}</span>
+              </div>
+              <div class="flex items-center gap-1 font-medium">
+                <ArmchairIcon class="size-3 print:size-2.5" />
+                {{ d.nama_kursi }}
+              </div>
+            </div>
           </div>
         </div>
 
         <Separator class="print:hidden" />
 
-        <div>
-          <p class="text-muted-foreground mb-1 text-xs uppercase print:mb-0 print:text-[10px]">
-            Data Penumpang
+        <div class="flex items-center justify-between">
+          <p class="text-muted-foreground text-xs uppercase print:text-[10px]">Total</p>
+          <p class="text-primary text-lg font-bold print:text-sm">
+            {{ formatHarga(tiket.total_harga) }}
           </p>
-          <div class="space-y-0.5 text-sm print:text-xs">
-            <p class="flex items-center gap-2">
-              <User class="size-4 print:size-3" /> {{ tiket.penumpang.nama }}
-            </p>
-            <p class="flex items-center gap-2">
-              <Mail class="size-4 print:size-3" /> {{ tiket.penumpang.email }}
-            </p>
-            <p class="flex items-center gap-2">
-              <Phone class="size-4 print:size-3" /> {{ tiket.penumpang.no_hp }}
-            </p>
-          </div>
         </div>
 
         <Separator class="print:hidden" />
@@ -211,7 +230,7 @@
       >
         <Printer class="mr-2 size-4" /> Cetak
       </Button>
-      <Link :href="home.url()">
+      <Link :href="`/booking/${tiket.id_jadwal}`">
         <Button class="cursor-pointer"> <Train class="mr-2 size-4" /> Pesan Lagi </Button>
       </Link>
     </div>
