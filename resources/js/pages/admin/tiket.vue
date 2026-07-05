@@ -18,10 +18,12 @@
     tikets: {
       data: {
         id_tiket: number
-        kursi: string
-        harga: number
+        total_harga: number
         status_pembayaran: string
-        penumpang: { nama: string; email: string }
+        detail_tikets: {
+          nama_kursi: string
+          penumpang: { nama: string; email: string }
+        }[]
         jadwal: {
           kereta: { nama_kereta: string; kelas: string }
           stasiun_asal: { nama_stasiun: string; kota: string }
@@ -47,9 +49,9 @@
     const q = search.value.toLowerCase()
     return props.tikets.data.filter(
       t =>
-        t.penumpang.nama.toLowerCase().includes(q) ||
+        t.detail_tikets.some(d => d.penumpang.nama.toLowerCase().includes(q)) ||
         t.jadwal.kereta.nama_kereta.toLowerCase().includes(q) ||
-        t.kursi.toLowerCase().includes(q) ||
+        t.detail_tikets.some(d => d.nama_kursi.toLowerCase().includes(q)) ||
         String(t.id_tiket).includes(q)
     )
   })
@@ -101,9 +103,8 @@
             </Badge>
           </div>
           <p class="text-muted-foreground mt-1 text-sm">
-            {{ t.penumpang.nama }} &middot; {{ t.jadwal.kereta.nama_kereta }} ({{
-              t.jadwal.kereta.kelas
-            }})
+            {{ t.detail_tikets[0]?.penumpang.nama ?? "-" }} &middot;
+            {{ t.jadwal.kereta.nama_kereta }} ({{ t.jadwal.kereta.kelas }})
           </p>
           <div
             class="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs"
@@ -113,10 +114,11 @@
               {{ t.jadwal.stasiun_tujuan.nama_stasiun }}</span
             >
             <span class="flex items-center gap-1"
-              ><ArmchairIcon class="size-3" /> {{ t.kursi }}</span
+              ><ArmchairIcon class="size-3" />
+              {{ t.detail_tikets.map(d => d.nama_kursi).join(", ") }}</span
             >
             <span>{{ formatDate(t.jadwal.waktu_berangkat) }}</span>
-            <span class="text-primary font-medium">{{ formatHarga(t.harga) }}</span>
+            <span class="text-primary font-medium">{{ formatHarga(t.total_harga) }}</span>
           </div>
         </template>
         <template #actions>

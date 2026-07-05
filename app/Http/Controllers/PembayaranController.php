@@ -12,7 +12,7 @@ class PembayaranController extends Controller
 {
     public function formPembayaran(Tiket $tiket)
     {
-        $tiket->load(['penumpang', 'jadwal.kereta', 'jadwal.stasiunAsal', 'jadwal.stasiunTujuan']);
+        $tiket->load(['detailTikets.penumpang', 'jadwal.kereta', 'jadwal.stasiunAsal', 'jadwal.stasiunTujuan']);
 
         if ($tiket->status_pembayaran === 'Lunas') {
             return redirect()->route('invoice', $tiket->id_tiket);
@@ -40,7 +40,7 @@ class PembayaranController extends Controller
                 'id_tiket' => $tiket->id_tiket,
                 'tanggal_bayar' => now(),
                 'metode_bayar' => $validated['metode_bayar'],
-                'jumlah' => $tiket->harga,
+                'jumlah' => $tiket->total_harga,
             ]);
         });
 

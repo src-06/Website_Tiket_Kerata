@@ -19,19 +19,20 @@ class AdminController extends Controller
             'kereta' => Kereta::count(),
             'stasiun' => Stasiun::count(),
             'penumpang' => Penumpang::count(),
-            'pendapatan' => (float) Tiket::where('status_pembayaran', 'Lunas')->sum('harga'),
+            'pendapatan' => (float) Tiket::where('status_pembayaran', 'Lunas')->sum('total_harga'),
         ];
 
-        $tiketTerbaru = Tiket::with(['penumpang', 'jadwal.kereta'])
+        $tiketTerbaru = Tiket::with(['detailTikets.penumpang', 'jadwal.kereta'])
             ->latest()
             ->limit(5)
             ->get()
             ->map(fn ($t) => [
                 'id_tiket' => $t->id_tiket,
-                'kursi' => $t->kursi,
-                'harga' => $t->harga,
+                'kursi' => $t->detailTikets->pluck('nama_kursi')->implode(', '),
+                'jumlah_penumpang' => $t->detailTikets->count(),
+                'total_harga' => $t->total_harga,
                 'status_pembayaran' => $t->status_pembayaran,
-                'penumpang' => ['nama' => $t->penumpang->nama],
+                'penumpang' => $t->detailTikets->first()?->penumpang?->nama ?? '-',
                 'kereta' => ['nama_kereta' => $t->jadwal->kereta->nama_kereta],
             ]);
 

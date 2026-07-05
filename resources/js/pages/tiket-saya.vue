@@ -15,9 +15,12 @@
     tikets: {
       data: {
         id_tiket: number
-        kursi: string
-        harga: number
+        total_harga: number
         status_pembayaran: string
+        detail_tikets: {
+          nama_kursi: string
+          penumpang: { nama: string }
+        }[]
         jadwal: {
           kereta: { nama_kereta: string; kelas: string }
           stasiun_asal: { nama_stasiun: string; kota: string }
@@ -45,7 +48,7 @@
     return props.tikets.data.filter(
       t =>
         t.jadwal.kereta.nama_kereta.toLowerCase().includes(q) ||
-        t.kursi.toLowerCase().includes(q) ||
+        t.detail_tikets.some(d => d.nama_kursi.toLowerCase().includes(q)) ||
         String(t.id_tiket).includes(q)
     )
   })
@@ -107,13 +110,14 @@
               {{ t.jadwal.stasiun_tujuan.nama_stasiun }}</span
             >
             <span class="flex items-center gap-1"
-              ><ArmchairIcon class="size-3" /> Kursi {{ t.kursi }}</span
+              ><ArmchairIcon class="size-3" />
+              {{ t.detail_tikets.map(d => d.nama_kursi).join(", ") }}</span
             >
             <span
               >{{ formatDate(t.jadwal.waktu_berangkat) }}
               {{ formatWaktu(t.jadwal.waktu_berangkat) }}</span
             >
-            <span class="text-primary font-medium">{{ formatHarga(t.harga) }}</span>
+            <span class="text-primary font-medium">{{ formatHarga(t.total_harga) }}</span>
           </div>
         </template>
         <template #actions>

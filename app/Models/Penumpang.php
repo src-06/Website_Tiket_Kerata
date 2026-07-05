@@ -26,8 +26,8 @@ class Penumpang extends Authenticatable
         ];
     }
 
-    public function tikets(): HasMany
+    public function detailTikets(): HasMany
     {
-        return $this->hasMany(Tiket::class, 'id_penumpang');
+        return $this->hasMany(DetailTiket::class, 'id_penumpang');
     }
 }

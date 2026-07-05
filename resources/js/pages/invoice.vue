@@ -11,8 +11,6 @@
     Clock,
     ArmchairIcon,
     User,
-    Mail,
-    Phone,
     CreditCard,
     Printer
   } from "@lucide/vue"
@@ -21,10 +19,14 @@
   defineProps<{
     tiket: {
       id_tiket: number
-      kursi: string
-      harga: number
+      total_harga: number
       status_pembayaran: string
-      penumpang: { nama: string; email: string; no_hp: string }
+      detail_tikets: {
+        id_detail_kursi: number
+        nama_kursi: string
+        harga_satuan: number
+        penumpang: { nama: string; email: string; no_hp: string }
+      }[]
       jadwal: {
         kereta: { nama_kereta: string; kelas: string }
         stasiun_asal: { nama_stasiun: string; kota: string }
@@ -151,38 +153,36 @@
 
         <Separator class="print:hidden" />
 
-        <div class="grid grid-cols-2 gap-4 print:gap-1">
-          <div>
-            <p class="text-muted-foreground text-xs uppercase print:text-[10px]">Kursi</p>
-            <p class="flex items-center gap-1 font-bold print:text-sm">
-              <ArmchairIcon class="size-4 print:size-3" /> {{ tiket.kursi }}
-            </p>
-          </div>
-          <div>
-            <p class="text-muted-foreground text-xs uppercase print:text-[10px]">Total</p>
-            <p class="text-primary text-lg font-bold print:text-sm">
-              {{ formatHarga(tiket.harga) }}
-            </p>
+        <div>
+          <p class="text-muted-foreground mb-1 text-xs uppercase print:mb-0 print:text-[10px]">
+            Daftar Penumpang & Kursi
+          </p>
+          <div class="space-y-1 text-sm print:text-xs">
+            <div
+              v-for="(d, i) in tiket.detail_tikets"
+              :key="d.id_detail_kursi"
+              class="flex items-center justify-between rounded bg-secondary/30 px-2 py-1"
+            >
+              <div class="flex items-center gap-2">
+                <span class="text-muted-foreground">{{ i + 1 }}.</span>
+                <User class="size-3 print:size-2.5" />
+                <span>{{ d.penumpang.nama }}</span>
+              </div>
+              <div class="flex items-center gap-1 font-medium">
+                <ArmchairIcon class="size-3 print:size-2.5" />
+                {{ d.nama_kursi }}
+              </div>
+            </div>
           </div>
         </div>
 
         <Separator class="print:hidden" />
 
-        <div>
-          <p class="text-muted-foreground mb-1 text-xs uppercase print:mb-0 print:text-[10px]">
-            Data Penumpang
+        <div class="flex items-center justify-between">
+          <p class="text-muted-foreground text-xs uppercase print:text-[10px]">Total</p>
+          <p class="text-primary text-lg font-bold print:text-sm">
+            {{ formatHarga(tiket.total_harga) }}
           </p>
-          <div class="space-y-0.5 text-sm print:text-xs">
-            <p class="flex items-center gap-2">
-              <User class="size-4 print:size-3" /> {{ tiket.penumpang.nama }}
-            </p>
-            <p class="flex items-center gap-2">
-              <Mail class="size-4 print:size-3" /> {{ tiket.penumpang.email }}
-            </p>
-            <p class="flex items-center gap-2">
-              <Phone class="size-4 print:size-3" /> {{ tiket.penumpang.no_hp }}
-            </p>
-          </div>
         </div>
 
         <Separator class="print:hidden" />

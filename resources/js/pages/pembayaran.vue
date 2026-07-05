@@ -6,16 +6,20 @@
   import { Badge } from "@/components/ui/badge"
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
   import { Separator } from "@/components/ui/separator"
-  import { Train, MapPin, Clock, Wallet, CreditCard, QrCode, CheckCircle } from "@lucide/vue"
+  import { Train, MapPin, Clock, Wallet, CreditCard, QrCode, CheckCircle, ArmchairIcon } from "@lucide/vue"
   import { useFormat } from "@/composables/useFormat"
 
   const props = defineProps<{
     tiket: {
       id_tiket: number
-      kursi: string
-      harga: number
+      total_harga: number
       status_pembayaran: string
-      penumpang: { nama: string; email: string; no_hp: string }
+      detail_tikets: {
+        id_detail_kursi: number
+        nama_kursi: string
+        harga_satuan: number
+        penumpang: { nama: string; email: string; no_hp: string }
+      }[]
       jadwal: {
         kereta: { nama_kereta: string; kelas: string }
         stasiun_asal: { nama_stasiun: string; kota: string }
@@ -132,13 +136,30 @@
             </div>
             <Separator />
             <div class="text-sm">
-              <p><strong>Nama:</strong> {{ tiket.penumpang.nama }}</p>
-              <p><strong>Kursi:</strong> {{ tiket.kursi }}</p>
+              <p class="mb-2 font-medium">Penumpang & Kursi</p>
+              <div class="space-y-2">
+                <div
+                  v-for="(d, i) in tiket.detail_tikets"
+                  :key="d.id_detail_kursi"
+                  class="flex items-center justify-between rounded-md bg-secondary/50 px-3 py-2"
+                >
+                  <div class="flex items-center gap-2">
+                    <span class="text-muted-foreground text-xs font-medium">{{ i + 1 }}.</span>
+                    <span>{{ d.penumpang.nama }}</span>
+                  </div>
+                  <Badge variant="outline">
+                    <ArmchairIcon class="mr-1 size-3" />
+                    {{ d.nama_kursi }}
+                  </Badge>
+                </div>
+              </div>
             </div>
             <Separator />
             <div class="flex items-center justify-between">
               <span class="text-sm">Total</span>
-              <span class="text-primary text-xl font-bold">{{ formatHarga(tiket.harga) }}</span>
+              <span class="text-primary text-xl font-bold">{{
+                formatHarga(tiket.total_harga)
+              }}</span>
             </div>
             <Button
               class="mt-2 w-full cursor-pointer"

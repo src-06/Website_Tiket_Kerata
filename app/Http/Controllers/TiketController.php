@@ -10,7 +10,7 @@ class TiketController extends Controller
 {
     public function index()
     {
-        $tikets = Tiket::with(['penumpang', 'jadwal.kereta', 'jadwal.stasiunAsal', 'jadwal.stasiunTujuan'])
+        $tikets = Tiket::with(['detailTikets.penumpang', 'jadwal.kereta', 'jadwal.stasiunAsal', 'jadwal.stasiunTujuan'])
             ->latest()
             ->paginate(10);
 
@@ -35,8 +35,10 @@ class TiketController extends Controller
 
     public function tiketSaya(Request $request)
     {
-        $tikets = Tiket::with(['jadwal.kereta', 'jadwal.stasiunAsal', 'jadwal.stasiunTujuan'])
-            ->where('id_penumpang', $request->user()->id_penumpang)
+        $tikets = Tiket::with(['detailTikets.penumpang', 'jadwal.kereta', 'jadwal.stasiunAsal', 'jadwal.stasiunTujuan'])
+            ->whereHas('detailTikets', function ($q) use ($request) {
+                $q->where('id_penumpang', $request->user()->id_penumpang);
+            })
             ->latest()
             ->paginate(10);
 

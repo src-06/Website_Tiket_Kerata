@@ -20,9 +20,10 @@
     tiketTerbaru: {
       id_tiket: number
       kursi: string
-      harga: number
+      jumlah_penumpang: number
+      total_harga: number
       status_pembayaran: string
-      penumpang: { nama: string }
+      penumpang: string
       kereta: { nama_kereta: string }
     }[]
   }>()
@@ -110,11 +111,13 @@
                 </Badge>
               </div>
               <p class="text-muted-foreground mt-1 text-sm">
-                {{ t.penumpang.nama }} &middot; {{ t.kereta.nama_kereta }} &middot; Kursi
+                {{ t.penumpang }} &middot; {{ t.kereta.nama_kereta }} &middot; Kursi
                 {{ t.kursi }}
               </p>
             </div>
-            <span class="text-primary text-sm font-semibold">{{ formatHarga(t.harga) }}</span>
+            <span class="text-primary text-sm font-semibold">{{
+              formatHarga(t.total_harga)
+            }}</span>
           </div>
         </div>
       </CardContent>

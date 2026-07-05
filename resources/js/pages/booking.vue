@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch } from "vue"
+  import { ref, computed, watch } from "vue"
   import { router, usePage } from "@inertiajs/vue3"
   import { simpan } from "@/routes/booking"
   import { Button } from "@/components/ui/button"
@@ -23,10 +23,11 @@
     }
     kursiTerpakai: string[]
     semuaKursi: string[]
-    user: { nama: string; email: string; no_hp: string }
+    user: { id_penumpang: number; nama: string; email: string; no_hp: string }
   }>()
 
-  const kursi = ref("")
+  const MAX_KURSI = 4
+  const kursiDipilih = ref<string[]>([])
   const errors = ref<Record<string, string>>({})
 
   watch(
@@ -41,21 +42,31 @@
 
   const { harga: formatHarga, waktu: formatWaktu } = useFormat()
 
-  function pilihKursi(k: string) {
+  const totalHarga = computed(() => props.jadwal.harga * kursiDipilih.value.length)
+
+  function toggleKursi(k: string) {
     if (props.kursiTerpakai.includes(k)) return
-    kursi.value = k
+
+    const idx = kursiDipilih.value.indexOf(k)
+    if (idx >= 0) {
+      kursiDipilih.value.splice(idx, 1)
+    } else if (kursiDipilih.value.length < MAX_KURSI) {
+      kursiDipilih.value.push(k)
+    }
   }
 
   function handleSimpan() {
     errors.value = {}
 
-    if (!kursi.value) errors.value.kursi = "Pilih kursi terlebih dahulu"
+    if (kursiDipilih.value.length === 0) {
+      errors.value.kursi = "Pilih minimal 1 kursi"
+    }
 
     if (Object.keys(errors.value).length > 0) return
 
     router.post(simpan.url(), {
       id_jadwal: props.jadwal.id_jadwal,
-      kursi: kursi.value
+      kursi: kursiDipilih.value
     })
   }
 </script>
@@ -103,6 +114,12 @@
             <CardTitle class="flex items-center gap-2">
               <ArmchairIcon class="size-5" />
               Pilih Kursi
+              <Badge
+                variant="secondary"
+                class="ml-auto"
+              >
+                {{ kursiDipilih.length }} / {{ MAX_KURSI }}
+              </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -116,11 +133,11 @@
                   'flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-all',
                   kursiTerpakai.includes(k)
                     ? 'bg-muted/50 text-muted-foreground/60 cursor-not-allowed line-through'
-                    : kursi === k
+                    : kursiDipilih.includes(k)
                       ? 'bg-primary text-primary-foreground scale-110 shadow-md'
                       : 'bg-secondary hover:bg-secondary/80 hover:scale-105'
                 ]"
-                @click="pilihKursi(k)"
+                @click="toggleKursi(k)"
               >
                 {{ k }}
               </button>
@@ -172,7 +189,9 @@
             <div class="flex items-center gap-2 text-sm">
               <ArrowRight class="size-4" />
               <span
-                >{{ jadwal.stasiun_tujuan.nama_stasiun }} ({{ jadwal.stasiun_tujuan.kota }})</span
+                >{{ jadwal.stasiun_tujuan.nama_stasiun }} ({{
+                  jadwal.stasiun_tujuan.kota
+                }})</span
               >
             </div>
             <Separator />
@@ -184,20 +203,45 @@
               >
             </div>
             <Separator />
-            <div class="flex items-center gap-2 text-sm">
-              <ArmchairIcon class="size-4" />
-              <span
-                >Kursi: <strong>{{ kursi || "-" }}</strong></span
+            <div class="text-sm">
+              <p class="mb-1 flex items-center gap-1 font-medium">
+                <ArmchairIcon class="size-4" /> Kursi Dipilih
+              </p>
+              <div
+                v-if="kursiDipilih.length > 0"
+                class="flex flex-wrap gap-1"
               >
+                <Badge
+                  v-for="k in kursiDipilih"
+                  :key="k"
+                  variant="secondary"
+                >
+                  {{ k }}
+                </Badge>
+              </div>
+              <p
+                v-else
+                class="text-muted-foreground"
+              >
+                Belum ada kursi dipilih
+              </p>
             </div>
             <Separator />
-            <div class="flex items-center justify-between">
-              <span class="text-sm">Total</span>
-              <span class="text-primary text-xl font-bold">{{ formatHarga(jadwal.harga) }}</span>
+            <div class="text-sm">
+              <p class="text-muted-foreground">
+                {{ kursiDipilih.length }} x {{ formatHarga(jadwal.harga) }}
+              </p>
+              <div class="flex items-center justify-between">
+                <span class="font-medium">Total</span>
+                <span class="text-primary text-xl font-bold">{{
+                  formatHarga(totalHarga)
+                }}</span>
+              </div>
             </div>
             <Button
               class="mt-2 w-full cursor-pointer"
               size="lg"
+              :disabled="kursiDipilih.length === 0"
               @click="handleSimpan"
             >
               Lanjut ke Pembayaran

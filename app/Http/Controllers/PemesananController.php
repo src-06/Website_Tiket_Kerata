@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailTiket;
 use App\Models\Jadwal;
 use App\Models\Tiket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class PemesananController extends Controller
@@ -13,9 +15,9 @@ class PemesananController extends Controller
     {
         $jadwal->load(['kereta', 'stasiunAsal', 'stasiunTujuan']);
 
-        $kursiTerpakai = Tiket::where('id_jadwal', $jadwal->id_jadwal)
-            ->pluck('kursi')
-            ->toArray();
+        $kursiTerpakai = DetailTiket::whereHas('tiket', function ($q) use ($jadwal) {
+            $q->where('id_jadwal', $jadwal->id_jadwal);
+        })->pluck('nama_kursi')->toArray();
 
         $semuaKursi = [];
         $baris = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -30,6 +32,7 @@ class PemesananController extends Controller
             'kursiTerpakai' => $kursiTerpakai,
             'semuaKursi' => $semuaKursi,
             'user' => $request->user() ? [
+                'id_penumpang' => $request->user()->id_penumpang,
                 'nama' => $request->user()->nama,
                 'email' => $request->user()->email,
                 'no_hp' => $request->user()->no_hp,
@@ -41,27 +44,40 @@ class PemesananController extends Controller
     {
         $validated = $request->validate([
             'id_jadwal' => 'required|exists:jadwal,id_jadwal',
-            'kursi' => 'required|string|max:3',
+            'kursi' => 'required|array|min:1|max:4',
+            'kursi.*' => 'required|string|max:3',
         ]);
 
         $jadwal = Jadwal::findOrFail($validated['id_jadwal']);
 
-        $kursiTerpakai = Tiket::where('id_jadwal', $jadwal->id_jadwal)
-            ->pluck('kursi')
-            ->toArray();
+        $kursiTerpakai = DetailTiket::whereHas('tiket', function ($q) use ($jadwal) {
+            $q->where('id_jadwal', $jadwal->id_jadwal);
+        })->pluck('nama_kursi')->toArray();
 
-        if (in_array($validated['kursi'], $kursiTerpakai)) {
-            return back()->withErrors(['kursi' => 'Kursi sudah dipesan']);
+        $terpakai = array_intersect($validated['kursi'], $kursiTerpakai);
+        if (! empty($terpakai)) {
+            return back()->withErrors(['kursi' => 'Kursi '.implode(', ', $terpakai).' sudah dipesan']);
         }
 
-        $tiket = Tiket::create([
-            'id_penumpang' => $request->user()->id_penumpang,
-            'id_jadwal' => $jadwal->id_jadwal,
-            'kursi' => $validated['kursi'],
-            'harga' => $jadwal->harga,
-            'status_pembayaran' => 'Belum Lunas',
-        ]);
+        $totalHarga = $jadwal->harga * count($validated['kursi']);
 
-        return redirect()->route('pembayaran', $tiket->id_tiket);
+        return DB::transaction(function () use ($validated, $jadwal, $totalHarga, $request) {
+            $tiket = Tiket::create([
+                'id_jadwal' => $jadwal->id_jadwal,
+                'total_harga' => $totalHarga,
+                'status_pembayaran' => 'Belum Lunas',
+            ]);
+
+            foreach ($validated['kursi'] as $kursi) {
+                DetailTiket::create([
+                    'id_tiket' => $tiket->id_tiket,
+                    'id_penumpang' => $request->user()->id_penumpang,
+                    'nama_kursi' => $kursi,
+                    'harga_satuan' => $jadwal->harga,
+                ]);
+            }
+
+            return redirect()->route('pembayaran', $tiket->id_tiket);
+        });
     }
 }
