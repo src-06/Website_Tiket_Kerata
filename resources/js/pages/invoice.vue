@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { Link } from "@inertiajs/vue3"
-  import { home } from "@/routes"
   import { Button } from "@/components/ui/button"
   import { Badge } from "@/components/ui/badge"
   import { Separator } from "@/components/ui/separator"
@@ -19,6 +18,7 @@
   defineProps<{
     tiket: {
       id_tiket: number
+      id_jadwal: number
       total_harga: number
       status_pembayaran: string
       waktu_berangkat_custom: string | null
@@ -230,7 +230,7 @@
       >
         <Printer class="mr-2 size-4" /> Cetak
       </Button>
-      <Link :href="home.url()">
+      <Link :href="`/booking/${tiket.id_jadwal}`">
         <Button class="cursor-pointer"> <Train class="mr-2 size-4" /> Pesan Lagi </Button>
       </Link>
     </div>
