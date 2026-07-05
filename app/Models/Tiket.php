@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Table('tiket', key: 'id_tiket')]
-#[Fillable(['id_jadwal', 'total_harga', 'status_pembayaran'])]
+#[Fillable(['id_jadwal', 'total_harga', 'status_pembayaran', 'waktu_berangkat_custom'])]
 class Tiket extends Model
 {
     public function jadwal(): BelongsTo

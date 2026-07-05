@@ -21,6 +21,7 @@
       id_tiket: number
       total_harga: number
       status_pembayaran: string
+      waktu_berangkat_custom: string | null
       detail_tikets: {
         id_detail_kursi: number
         nama_kursi: string
@@ -32,7 +33,7 @@
         stasiun_asal: { nama_stasiun: string; kota: string }
         stasiun_tujuan: { nama_stasiun: string; kota: string }
         waktu_berangkat: string
-        waktu_tiba: string
+        durasi_perjalanan: number
       }
       pembayaran: {
         id_pembayaran: number
@@ -44,6 +45,12 @@
   }>()
 
   const { harga: formatHarga, waktu: formatWaktu, tanggalLengkap } = useFormat()
+
+  function estimasiTiba(waktuBerangkat: string, durasi: number) {
+    const d = new Date(waktuBerangkat)
+    d.setMinutes(d.getMinutes() + durasi)
+    return formatWaktu(d.toISOString())
+  }
 
   function cetak() {
     window.print()
@@ -116,14 +123,22 @@
             Tanggal Keberangkatan
           </p>
           <p class="text-sm font-medium print:text-xs">
-            {{ tanggalLengkap(tiket.jadwal.waktu_berangkat) }}
+            {{
+              tiket.waktu_berangkat_custom
+                ? tanggalLengkap(tiket.waktu_berangkat_custom)
+                : tanggalLengkap(tiket.jadwal.waktu_berangkat)
+            }}
           </p>
         </div>
 
         <div class="grid grid-cols-3 items-center gap-3 text-center print:gap-0.5">
           <div>
             <p class="text-lg font-bold print:text-sm">
-              {{ formatWaktu(tiket.jadwal.waktu_berangkat) }}
+              {{
+                tiket.waktu_berangkat_custom
+                  ? formatWaktu(tiket.waktu_berangkat_custom)
+                  : formatWaktu(tiket.jadwal.waktu_berangkat)
+              }}
             </p>
             <p class="text-muted-foreground text-sm print:text-xs">
               {{ tiket.jadwal.stasiun_asal.nama_stasiun }}
@@ -140,7 +155,11 @@
           </div>
           <div>
             <p class="text-lg font-bold print:text-sm">
-              {{ formatWaktu(tiket.jadwal.waktu_tiba) }}
+              {{
+                tiket.waktu_berangkat_custom
+                  ? estimasiTiba(tiket.waktu_berangkat_custom, tiket.jadwal.durasi_perjalanan)
+                  : estimasiTiba(tiket.jadwal.waktu_berangkat, tiket.jadwal.durasi_perjalanan)
+              }}
             </p>
             <p class="text-muted-foreground text-sm print:text-xs">
               {{ tiket.jadwal.stasiun_tujuan.nama_stasiun }}

@@ -6,7 +6,19 @@
   import { Badge } from "@/components/ui/badge"
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
   import { Separator } from "@/components/ui/separator"
-  import { Train, User, Mail, Phone, ArmchairIcon, ArrowRight, MapPin, Clock } from "@lucide/vue"
+  import { Input } from "@/components/ui/input"
+  import { Label } from "@/components/ui/label"
+  import {
+    Train,
+    User,
+    Mail,
+    Phone,
+    ArmchairIcon,
+    ArrowRight,
+    MapPin,
+    Clock,
+    CalendarRange
+  } from "@lucide/vue"
   import { useFormat } from "@/composables/useFormat"
 
   const page = usePage()
@@ -18,9 +30,16 @@
       stasiun_asal: { nama_stasiun: string; kota: string }
       stasiun_tujuan: { nama_stasiun: string; kota: string }
       waktu_berangkat: string
-      waktu_tiba: string
+      durasi_perjalanan: number
       harga: number
     }
+    jadwalLainnya: {
+      id_jadwal: number
+      kereta: { nama_kereta: string; kelas: string }
+      waktu_berangkat: string
+      durasi_perjalanan: number
+      harga: number
+    }[]
     kursiTerpakai: string[]
     semuaKursi: string[]
     user: { id_penumpang: number; nama: string; email: string; no_hp: string }
@@ -28,6 +47,7 @@
 
   const MAX_KURSI = 4
   const kursiDipilih = ref<string[]>([])
+  const waktuBerangkatCustom = ref("")
   const errors = ref<Record<string, string>>({})
 
   watch(
@@ -44,6 +64,20 @@
 
   const totalHarga = computed(() => props.jadwal.harga * kursiDipilih.value.length)
 
+  function estimasiTiba(waktuBerangkat: string, durasi: number) {
+    const d = new Date(waktuBerangkat)
+    d.setMinutes(d.getMinutes() + durasi)
+    return formatWaktu(d.toISOString())
+  }
+
+  function formatDurasi(menit: number) {
+    const j = Math.floor(menit / 60)
+    const m = menit % 60
+    if (j > 0 && m > 0) return `${j}j ${m}m`
+    if (j > 0) return `${j} jam`
+    return `${m} menit`
+  }
+
   function toggleKursi(k: string) {
     if (props.kursiTerpakai.includes(k)) return
 
@@ -55,6 +89,10 @@
     }
   }
 
+  function pilihJadwal(idJadwal: number) {
+    router.visit(`/booking/${idJadwal}`, { preserveScroll: true })
+  }
+
   function handleSimpan() {
     errors.value = {}
 
@@ -62,11 +100,19 @@
       errors.value.kursi = "Pilih minimal 1 kursi"
     }
 
+    if (waktuBerangkatCustom.value) {
+      const selectedDate = new Date(waktuBerangkatCustom.value)
+      if (selectedDate <= new Date()) {
+        errors.value.waktu_berangkat_custom = "Waktu berangkat harus setelah sekarang"
+      }
+    }
+
     if (Object.keys(errors.value).length > 0) return
 
     router.post(simpan.url(), {
       id_jadwal: props.jadwal.id_jadwal,
-      kursi: kursiDipilih.value
+      kursi: kursiDipilih.value,
+      waktu_berangkat_custom: waktuBerangkatCustom.value || null
     })
   }
 </script>
@@ -105,6 +151,43 @@
                 <p class="text-muted-foreground text-xs">No. Handphone</p>
                 <p class="font-medium">{{ user.no_hp }}</p>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card
+          v-if="jadwalLainnya.length > 0"
+          class="mt-6"
+        >
+          <CardHeader>
+            <CardTitle class="flex items-center gap-2">
+              <CalendarRange class="size-5" />
+              Jadwal Lainnya
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="space-y-2">
+              <button
+                v-for="j in jadwalLainnya"
+                :key="j.id_jadwal"
+                type="button"
+                class="flex w-full cursor-pointer items-center justify-between rounded-lg border p-3 text-left transition-all hover:border-primary/50 hover:bg-primary/5"
+                @click="pilihJadwal(j.id_jadwal)"
+              >
+                <div class="flex items-center gap-3">
+                  <Train class="text-muted-foreground size-4" />
+                  <div>
+                    <p class="text-sm font-medium">{{ j.kereta.nama_kereta }}</p>
+                    <p class="text-muted-foreground text-xs">{{ j.kereta.kelas }}</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-medium">
+                    {{ formatWaktu(j.waktu_berangkat) }} - {{ estimasiTiba(j.waktu_berangkat, j.durasi_perjalanan) }}
+                  </p>
+                  <p class="text-primary text-xs font-semibold">{{ formatHarga(j.harga) }}</p>
+                </div>
+              </button>
             </div>
           </CardContent>
         </Card>
@@ -161,6 +244,42 @@
             </p>
           </CardContent>
         </Card>
+
+        <Card class="mt-6">
+          <CardHeader>
+            <CardTitle class="flex items-center gap-2">
+              <Clock class="size-5" />
+              Waktu Keberangkatan
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-3">
+            <div class="rounded-lg border border-dashed p-3 text-sm">
+              <p class="text-muted-foreground">Jadwal default:</p>
+              <p class="font-medium">
+                {{ formatWaktu(jadwal.waktu_berangkat) }} - {{ estimasiTiba(jadwal.waktu_berangkat, jadwal.durasi_perjalanan) }}
+              </p>
+              <p class="text-muted-foreground text-xs">(~{{ formatDurasi(jadwal.durasi_perjalanan) }})</p>
+            </div>
+            <div class="space-y-2">
+              <Label for="waktu_custom">Atau atur waktu sendiri (opsional)</Label>
+              <Input
+                id="waktu_custom"
+                v-model="waktuBerangkatCustom"
+                type="datetime-local"
+                :min="new Date().toISOString().slice(0, 16)"
+              />
+              <p
+                v-if="errors.waktu_berangkat_custom"
+                class="text-destructive text-xs"
+              >
+                {{ errors.waktu_berangkat_custom }}
+              </p>
+              <p class="text-muted-foreground text-xs">
+                Kosongkan jika ingin menggunakan jadwal default
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <div class="lg:col-span-2">
@@ -197,10 +316,16 @@
             <Separator />
             <div class="flex items-center gap-2 text-sm">
               <Clock class="size-4" />
-              <span
-                >{{ formatWaktu(jadwal.waktu_berangkat) }} -
-                {{ formatWaktu(jadwal.waktu_tiba) }}</span
-              >
+              <span v-if="waktuBerangkatCustom">
+                <span class="text-muted-foreground line-through">{{
+                  formatWaktu(jadwal.waktu_berangkat)
+                }}</span>
+                <span class="ml-1 font-medium">{{ formatWaktu(waktuBerangkatCustom) }}</span>
+              </span>
+              <span v-else>
+                {{ formatWaktu(jadwal.waktu_berangkat) }} -
+                {{ estimasiTiba(jadwal.waktu_berangkat, jadwal.durasi_perjalanan) }}
+              </span>
             </div>
             <Separator />
             <div class="text-sm">

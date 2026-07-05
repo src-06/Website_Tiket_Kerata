@@ -19,6 +19,15 @@ class PemesananController extends Controller
             $q->where('id_jadwal', $jadwal->id_jadwal);
         })->pluck('nama_kursi')->toArray();
 
+        $jadwalLainnya = Jadwal::with(['kereta'])
+            ->where('id_stasiun_asal', $jadwal->id_stasiun_asal)
+            ->where('id_stasiun_tujuan', $jadwal->id_stasiun_tujuan)
+            ->where('id_jadwal', '!=', $jadwal->id_jadwal)
+            ->where('waktu_berangkat', '>', now())
+            ->orderBy('waktu_berangkat')
+            ->limit(10)
+            ->get();
+
         $semuaKursi = [];
         $baris = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
         foreach ($baris as $b) {
@@ -29,6 +38,7 @@ class PemesananController extends Controller
 
         return Inertia::render('booking', [
             'jadwal' => $jadwal,
+            'jadwalLainnya' => $jadwalLainnya,
             'kursiTerpakai' => $kursiTerpakai,
             'semuaKursi' => $semuaKursi,
             'user' => $request->user() ? [
@@ -46,6 +56,7 @@ class PemesananController extends Controller
             'id_jadwal' => 'required|exists:jadwal,id_jadwal',
             'kursi' => 'required|array|min:1|max:4',
             'kursi.*' => 'required|string|max:3',
+            'waktu_berangkat_custom' => 'nullable|date|after:now',
         ]);
 
         $jadwal = Jadwal::findOrFail($validated['id_jadwal']);
@@ -66,6 +77,7 @@ class PemesananController extends Controller
                 'id_jadwal' => $jadwal->id_jadwal,
                 'total_harga' => $totalHarga,
                 'status_pembayaran' => 'Belum Lunas',
+                'waktu_berangkat_custom' => $validated['waktu_berangkat_custom'] ?? null,
             ]);
 
             foreach ($validated['kursi'] as $kursi) {

@@ -22,7 +22,7 @@
         stasiun_asal: { nama_stasiun: string; kota: string }
         stasiun_tujuan: { nama_stasiun: string; kota: string }
         waktu_berangkat: string
-        waktu_tiba: string
+        durasi_perjalanan: number
         harga: number
       }[]
       meta: {
@@ -38,6 +38,20 @@
 
   const { harga: formatHarga, waktu: formatWaktu, date: formatDate } = useFormat()
   const { hapus } = useConfirmDelete("jadwal")
+
+  function estimasiTiba(waktuBerangkat: string, durasi: number) {
+    const d = new Date(waktuBerangkat)
+    d.setMinutes(d.getMinutes() + durasi)
+    return formatWaktu(d.toISOString())
+  }
+
+  function formatDurasi(menit: number) {
+    const j = Math.floor(menit / 60)
+    const m = menit % 60
+    if (j > 0 && m > 0) return `${j}j ${m}m`
+    if (j > 0) return `${j} jam`
+    return `${m} menit`
+  }
 </script>
 
 <template>
@@ -82,7 +96,8 @@
             <span class="flex items-center gap-1"
               ><Clock class="size-3" /> {{ formatDate(j.waktu_berangkat) }}</span
             >
-            <span>{{ formatWaktu(j.waktu_berangkat) }} - {{ formatWaktu(j.waktu_tiba) }}</span>
+            <span>{{ formatWaktu(j.waktu_berangkat) }} - {{ estimasiTiba(j.waktu_berangkat, j.durasi_perjalanan) }}</span>
+            <span class="text-muted-foreground text-xs">(~{{ formatDurasi(j.durasi_perjalanan) }})</span>
             <span class="text-primary font-medium">{{ formatHarga(j.harga) }}</span>
           </div>
         </template>

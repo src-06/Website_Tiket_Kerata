@@ -76,7 +76,7 @@ class JadwalController extends Controller
             'id_stasiun_asal' => 'required|exists:stasiun,id_stasiun',
             'id_stasiun_tujuan' => 'required|exists:stasiun,id_stasiun|different:id_stasiun_asal',
             'waktu_berangkat' => 'required|date',
-            'waktu_tiba' => 'required|date|after:waktu_berangkat',
+            'durasi_perjalanan' => 'required|integer|min:1|max:1440',
             'harga' => 'required|integer|min:0',
         ]);
 
@@ -101,7 +101,7 @@ class JadwalController extends Controller
             'id_stasiun_asal' => 'required|exists:stasiun,id_stasiun',
             'id_stasiun_tujuan' => 'required|exists:stasiun,id_stasiun|different:id_stasiun_asal',
             'waktu_berangkat' => 'required|date',
-            'waktu_tiba' => 'required|date|after:waktu_berangkat',
+            'durasi_perjalanan' => 'required|integer|min:1|max:1440',
             'harga' => 'required|integer|min:0',
         ]);
 

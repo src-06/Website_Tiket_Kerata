@@ -14,6 +14,7 @@
       id_tiket: number
       total_harga: number
       status_pembayaran: string
+      waktu_berangkat_custom: string | null
       detail_tikets: {
         id_detail_kursi: number
         nama_kursi: string
@@ -25,7 +26,7 @@
         stasiun_asal: { nama_stasiun: string; kota: string }
         stasiun_tujuan: { nama_stasiun: string; kota: string }
         waktu_berangkat: string
-        waktu_tiba: string
+        durasi_perjalanan: number
       }
     }
   }>()
@@ -33,6 +34,12 @@
   const metodeBayar = ref("")
   const loading = ref(false)
   const { harga: formatHarga, waktu: formatWaktu } = useFormat()
+
+  function estimasiTiba(waktuBerangkat: string, durasi: number) {
+    const d = new Date(waktuBerangkat)
+    d.setMinutes(d.getMinutes() + durasi)
+    return formatWaktu(d.toISOString())
+  }
 
   function bayar() {
     if (!metodeBayar.value) return
@@ -129,10 +136,18 @@
             </div>
             <div class="flex items-center gap-2 text-sm">
               <Clock class="size-4" />
-              <span
-                >{{ formatWaktu(tiket.jadwal.waktu_berangkat) }} -
-                {{ formatWaktu(tiket.jadwal.waktu_tiba) }}</span
-              >
+              <span v-if="tiket.waktu_berangkat_custom">
+                <span class="text-muted-foreground line-through">{{
+                  formatWaktu(tiket.jadwal.waktu_berangkat)
+                }}</span>
+                <span class="ml-1 font-medium">{{
+                  formatWaktu(tiket.waktu_berangkat_custom)
+                }}</span>
+              </span>
+              <span v-else>
+                {{ formatWaktu(tiket.jadwal.waktu_berangkat) }} -
+                {{ estimasiTiba(tiket.jadwal.waktu_berangkat, tiket.jadwal.durasi_perjalanan) }}
+              </span>
             </div>
             <Separator />
             <div class="text-sm">
