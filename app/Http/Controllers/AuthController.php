@@ -49,7 +49,7 @@ class AuthController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:penumpang,email',
-            'no_hp' => 'required|string|max:20',
+            'no_hp' => 'required|string|max:20|regex:/^[0-9]+$/',
             'password' => 'required|string|min:8|confirmed',
         ]);
 

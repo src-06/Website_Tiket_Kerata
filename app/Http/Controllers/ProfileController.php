@@ -22,7 +22,7 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:penumpang,email,'.$user->id_penumpang.',id_penumpang',
-            'no_hp' => 'required|string|max:20',
+            'no_hp' => 'required|string|max:20|regex:/^[0-9]+$/',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 

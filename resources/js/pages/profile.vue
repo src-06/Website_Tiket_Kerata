@@ -25,6 +25,11 @@
   const password = ref("")
   const password_confirmation = ref("")
   const errors = ref<Record<string, string>>({})
+
+  function filterDigits(e: Event) {
+    const target = e.target as HTMLInputElement
+    target.value = target.value.replace(/\D/g, "")
+  }
   const processing = ref(false)
   const successMsg = ref("")
   const errorMsg = ref("")
@@ -46,6 +51,7 @@
     if (!nama.value) errors.value.nama = "Nama harus diisi"
     if (!email.value) errors.value.email = "Email harus diisi"
     if (!no_hp.value) errors.value.no_hp = "No HP harus diisi"
+    else if (!/^\d+$/.test(no_hp.value)) errors.value.no_hp = "No HP hanya boleh angka"
     if (password.value && password.value.length < 8)
       errors.value.password = "Password minimal 8 karakter"
     if (password.value && password.value !== password_confirmation.value)
@@ -148,6 +154,7 @@
                 v-model="no_hp"
                 placeholder="Masukkan no handphone"
                 class="pl-9"
+                @input="filterDigits"
               />
             </div>
             <p
