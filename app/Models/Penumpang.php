@@ -26,6 +26,11 @@ class Penumpang extends Authenticatable
         ];
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->role === Role::Admin;
+    }
+
     public function detailTikets(): HasMany
     {
         return $this->hasMany(DetailTiket::class, 'id_penumpang');

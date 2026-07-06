@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/penumpang', [PenumpangController::class, 'index'])->name('penumpang');
     Route::put('/penumpang/{penumpang}/role', [PenumpangController::class, 'updateRole'])->name('penumpang.role');

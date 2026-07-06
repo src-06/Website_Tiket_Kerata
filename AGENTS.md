@@ -10,8 +10,8 @@
 | `pnpm build`                        | Vite production build                                       |
 | `pnpm lint` / `pnpm format`         | ESLint / Prettier (check only)                              |
 | `pnpm lint:fix` / `pnpm format:fix` | Auto-fix                                                    |
-| `php artisan migrate:fresh --seed`  | Reset DB + seed sample data (6 stasiun, 5 kereta, 7 jadwal) |
-| `php artisan wayfinder:generate`    | Regen typed JS route helpers (auto-runs on `pnpm dev`)      |
+| `php artisan migrate:fresh --seed`  | Reset DB + seed (10 stasiun, 10 kereta, ~100+ jadwal, 2 akun) |
+| `php artisan wayfinder:generate`    | Regen typed JS route helpers (auto-runs on `pnpm dev`)        |
 
 No `typecheck` or `codegen` scripts. Editor handles `vue-tsc`.
 
@@ -25,21 +25,53 @@ No `typecheck` or `codegen` scripts. Editor handles `vue-tsc`.
 
 ## Key Architecture
 
-- **No auth** — guest checkout flow. User model exists but unused.
-- **Custom PKs**: `id_stasiun`, `id_kereta`, `id_jadwal`, etc. Model `$table`/`$primaryKey` set explicitly.
+- **Auth** — session-based via model `Penumpang` (`config/auth.php`). Roles: `admin` / `user` (`App\Enums\Role`). Shared prop `auth.user` via `HandleInertiaRequests`.
+- **Custom PKs**: `id_stasiun`, `id_kereta`, `id_jadwal`, `id_tiket`, `id_penumpang`, `id_detail_kursi`. Models use `#[Table(...)]` attribute.
+- **Multi-passenger tickets** — 1 `Tiket` → banyak `DetailTiket` (kursi per penumpang, maks 4 kursi/booking).
 - **SQLite** — `database/database.sqlite`. Testing uses `:memory:`.
-- **Wayfinder** — generates `resources/js/routes/` and `resources/js/wayfinder/` (gitignored, ESLint-ignored). Import helpers like `import { form } from '@/routes/booking'` instead of using `route()`.
+- **Wayfinder** — generates `resources/js/routes/` and `resources/js/wayfinder/` (gitignored, ESLint-ignored). Import helpers like `import { showSearch } from '@/routes/jadwal'` instead of hardcoded URLs.
+- **Layouts** — `default.vue` (user sidebar) and `admin.vue` (admin sidebar). Admin pages use `defineOptions({ layout: admin })`.
+
+### Seed Accounts
+
+| Email               | Password   | Role  |
+| ------------------- | ---------- | ----- |
+| `admin@example.com` | `password` | admin |
+| `user@example.com`  | `password` | user  |
 
 ## Pages & Routes
 
-| Route                 | Page                    | Controller        |
-| --------------------- | ----------------------- | ----------------- |
-| `/`                   | `home.vue`              | BookingController |
-| `/jadwal/cari`        | `jadwal.vue`            | BookingController |
-| `/booking/{jadwal}`   | `booking.vue`           | BookingController |
-| `/pembayaran/{tiket}` | `pembayaran.vue`        | BookingController |
-| `/invoice/{tiket}`    | `invoice.vue`           | BookingController |
-| `/admin/*`            | `admin/*.vue` (7 pages) | AdminController   |
+### Public
+
+| Route       | Page           | Controller      |
+| ----------- | -------------- | --------------- |
+| `/`         | `home.vue`     | PencarianController |
+| `/login`    | `login.vue`    | AuthController  |
+| `/register` | `register.vue` | AuthController  |
+
+### Auth Required (`middleware('auth')`)
+
+| Route                 | Page             | Controller           |
+| --------------------- | ---------------- | -------------------- |
+| `/jadwal/cari`        | `cari.vue`       | PencarianController  |
+| POST `/jadwal/cari`   | `jadwal.vue`     | PencarianController  |
+| `/jadwal`             | `jadwal.vue`     | JadwalController     |
+| `/booking/{jadwal}`   | `booking.vue`    | PemesananController  |
+| `/pembayaran/{tiket}` | `pembayaran.vue` | PembayaranController |
+| `/invoice/{tiket}`    | `invoice.vue`    | InvoiceController    |
+| `/tiket-saya`         | `tiket-saya.vue` | TiketController      |
+| `/profile`            | `profile.vue`    | ProfileController    |
+
+### Admin (`middleware(['auth', 'admin'])`)
+
+| Route              | Page                          | Controller          |
+| ------------------ | ----------------------------- | ------------------- |
+| `/admin/dashboard` | `admin/dashboard.vue`         | AdminController     |
+| `/admin/penumpang` | `admin/penumpang.vue`         | PenumpangController |
+| `/admin/tiket`     | `admin/tiket.vue`             | TiketController     |
+| `/admin/jadwal`    | `admin/jadwal.vue` + form     | JadwalController    |
+| `/admin/kereta`    | `admin/kereta.vue` + form     | KeretaController    |
+| `/admin/stasiun`   | `admin/stasiun.vue` + form    | StasiunController   |
 
 ## Adding shadcn-vue Components
 
@@ -47,33 +79,41 @@ No `typecheck` or `codegen` scripts. Editor handles `vue-tsc`.
 pnpm dlx shadcn-vue@latest add <name> --yes
 ```
 
-Already installed: badge, button, card, input, label, select, separator, sheet, sidebar, skeleton, tooltip.
+Already installed: avatar, badge, button, card, dropdown-menu, input, label, select, separator, sheet, sidebar, skeleton, sonner, tooltip.
 
 ## Code Conventions
 
 - **Prettier**: no semis, double quotes, printWidth 100, Tailwind class sorting
 - **ESLint**: flat config, `vue/multi-word-component-names: off`, `@typescript-eslint/no-explicit-any: warn`
 - **Vue**: `<script setup lang="ts">`, Composition API
-- **PHP**: Laravel conventions, form requests validated inline in controllers
-- **Delete actions**: Use `$inertia.delete(url)` in templates (Inertia v3 injects `$inertia` globally)
+- **PHP**: Laravel conventions, validation inline in controllers (no Form Requests yet)
+- **Delete actions**: Use `router.delete(url)` from `@inertiajs/vue3` in templates
 
 ## Database Models & Relationships
 
 ```
 Stasiun ──┬── Jadwal (stasiun_asal)
-           └── Jadwal (stasiun_tujuan)
+          └── Jadwal (stasiun_tujuan)
 Kereta  ──── Jadwal
 Jadwal  ──── Tiket
-Penumpang ── Tiket
-Tiket   ──── Pembayaran (hasOne)
+Tiket   ──┬── DetailTiket ── Penumpang
+          └── Pembayaran (hasOne)
 ```
+
+### Key Columns
+
+- `jadwal`: `waktu_berangkat`, `durasi_perjalanan` (menit), `harga` — waktu tiba dihitung via `Jadwal::waktuTibaEstimasi()`
+- `tiket`: `total_harga`, `status_pembayaran`, `waktu_berangkat_custom` (nullable)
+- `detail_tiket`: `nama_kursi` (e.g. A1–G8), `harga_satuan`
 
 ## Notes
 
 - `Session|Cache|Queue` all use database driver (SQLite tables exist)
 - `tw-animate-css` provides CSS animations, imported in `app.css`
-- Dark mode via `.dark` class on parent
+- Dark mode via `.dark` class on parent (`useTheme` composable)
 - Montserrat font auto-loaded by `laravel-vite-plugin/fonts`
+- Seat grid: rows A–G, cols 1–8 (56 kursi); max 4 kursi per booking
+- Payment is simulated (Transfer Bank, E-Wallet, QRIS) — no real gateway
 
 ===
 
