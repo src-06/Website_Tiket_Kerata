@@ -36,38 +36,67 @@ class DatabaseSeeder extends Seeder
         $stasiuns = Stasiun::all();
         $keretas = Kereta::all();
 
+        // Helper: generate waktu berangkat unik untuk setiap jadwal
+        $generateWaktu = function () {
+            return now()->addDays(rand(0, 14))->addHours(rand(0, 23))->addMinutes(rand(0, 59));
+        };
+
         foreach ($stasiuns as $asal) {
             foreach ($stasiuns as $tujuan) {
                 if ($asal->id_stasiun === $tujuan->id_stasiun) {
                     continue;
                 }
 
-                Jadwal::create([
-                    'id_kereta' => $keretas->random()->id_kereta,
-                    'id_stasiun_asal' => $asal->id_stasiun,
-                    'id_stasiun_tujuan' => $tujuan->id_stasiun,
-                    'waktu_berangkat' => now()->addHours(rand(1, 168)),
-                    'durasi_perjalanan' => rand(60, 720),
-                    'harga' => rand(80000, 600000),
-                ]);
+                // 1-3 jadwal per rute secara acak
+                $jumlahJadwal = rand(1, 3);
+
+                for ($i = 0; $i < $jumlahJadwal; $i++) {
+                    Jadwal::create([
+                        'id_kereta' => $keretas->random()->id_kereta,
+                        'id_stasiun_asal' => $asal->id_stasiun,
+                        'id_stasiun_tujuan' => $tujuan->id_stasiun,
+                        'waktu_berangkat' => $generateWaktu(),
+                        'durasi_perjalanan' => rand(60, 720),
+                        'harga' => rand(80000, 600000),
+                    ]);
+                }
             }
         }
 
         $ruteTambahan = [
-            [0, 1], [0, 2], [1, 3], [2, 4], [3, 5],
-            [4, 6], [5, 7], [6, 8], [7, 9], [8, 0],
-            [0, 5], [1, 6], [2, 7], [3, 8], [4, 9],
+            [0, 1],
+            [0, 2],
+            [1, 3],
+            [2, 4],
+            [3, 5],
+            [4, 6],
+            [5, 7],
+            [6, 8],
+            [7, 9],
+            [8, 0],
+            [0, 5],
+            [1, 6],
+            [2, 7],
+            [3, 8],
+            [4, 9],
+            [0, 3],
+            [2, 9],
+            [4, 3],
+            [6, 9],
         ];
 
         foreach ($ruteTambahan as [$idxAsal, $idxTujuan]) {
-            Jadwal::create([
-                'id_kereta' => $keretas->random()->id_kereta,
-                'id_stasiun_asal' => $stasiuns[$idxAsal]->id_stasiun,
-                'id_stasiun_tujuan' => $stasiuns[$idxTujuan]->id_stasiun,
-                'waktu_berangkat' => now()->addHours(rand(1, 168)),
-                'durasi_perjalanan' => rand(60, 720),
-                'harga' => rand(80000, 600000),
-            ]);
+            // 2 jadwal per rute tambahan, waktu berbeda
+            for ($i = 0; $i < 2; $i++) {
+                Jadwal::create([
+                    'id_kereta' => $keretas->random()->id_kereta,
+                    'id_stasiun_asal' => $stasiuns[$idxAsal]->id_stasiun,
+                    'id_stasiun_tujuan' => $stasiuns[$idxTujuan]->id_stasiun,
+                    'waktu_berangkat' => $generateWaktu(),
+                    'durasi_perjalanan' => rand(60, 720),
+                    'harga' => rand(80000, 600000),
+                ]);
+            }
         }
     }
 }
