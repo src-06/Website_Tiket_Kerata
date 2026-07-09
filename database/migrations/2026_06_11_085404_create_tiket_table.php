@@ -10,11 +10,10 @@ return new class extends Migration
     {
         Schema::create('tiket', function (Blueprint $table) {
             $table->id('id_tiket');
-            $table->foreignId('id_penumpang')->constrained('penumpang', 'id_penumpang')->cascadeOnDelete();
             $table->foreignId('id_jadwal')->constrained('jadwal', 'id_jadwal')->cascadeOnDelete();
-            $table->string('kursi');
-            $table->integer('harga');
+            $table->integer('total_harga');
             $table->enum('status_pembayaran', ['Belum Lunas', 'Lunas'])->default('Belum Lunas');
+            $table->dateTime('waktu_berangkat_custom')->nullable();
             $table->timestamps();
         });
     }

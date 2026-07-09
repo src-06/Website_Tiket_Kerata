@@ -26,7 +26,7 @@ No `typecheck` or `codegen` scripts. Editor handles `vue-tsc`.
 ## Key Architecture
 
 - **Auth** — session-based via model `Penumpang` (`config/auth.php`). Roles: `admin` / `user` (`App\Enums\Role`). Shared prop `auth.user` via `HandleInertiaRequests`.
-- **Custom PKs**: `id_stasiun`, `id_kereta`, `id_jadwal`, `id_tiket`, `id_penumpang`, `id_detail_kursi`. Models use `#[Table(...)]` attribute.
+- **Custom PKs**: `id_stasiun`, `id_kereta`, `id_jadwal`, `id_tiket`, `id_penumpang`, `id_detail_tiket`. Models use `#[Table(...)]` attribute.
 - **Multi-passenger tickets** — 1 `Tiket` → banyak `DetailTiket` (kursi per penumpang, maks 4 kursi/booking).
 - **SQLite** — `database/database.sqlite`. Testing uses `:memory:`.
 - **Wayfinder** — generates `resources/js/routes/` and `resources/js/wayfinder/` (gitignored, ESLint-ignored). Import helpers like `import { showSearch } from '@/routes/jadwal'` instead of hardcoded URLs.

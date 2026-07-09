@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('id_stasiun_asal')->constrained('stasiun', 'id_stasiun')->cascadeOnDelete();
             $table->foreignId('id_stasiun_tujuan')->constrained('stasiun', 'id_stasiun')->cascadeOnDelete();
             $table->dateTime('waktu_berangkat');
-            $table->dateTime('waktu_tiba');
+            $table->unsignedSmallInteger('durasi_perjalanan')->comment('dalam menit');
             $table->integer('harga');
             $table->timestamps();
         });

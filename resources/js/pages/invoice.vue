@@ -23,7 +23,7 @@
       status_pembayaran: string
       waktu_berangkat_custom: string | null
       detail_tikets: {
-        id_detail_kursi: number
+        id_detail_tiket: number
         nama_kursi: string
         harga_satuan: number
         penumpang: { nama: string; email: string; no_hp: string }
@@ -179,7 +179,7 @@
           <div class="space-y-1 text-sm print:text-xs">
             <div
               v-for="(d, i) in tiket.detail_tikets"
-              :key="d.id_detail_kursi"
+              :key="d.id_detail_tiket"
               class="flex items-center justify-between rounded bg-secondary/30 px-2 py-1"
             >
               <div class="flex items-center gap-2">

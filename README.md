@@ -119,7 +119,7 @@ php artisan migrate:fresh --seed
 
 ### Kunci Utama (Primary Keys)
 
-Menggunakan custom naming: `id_stasiun`, `id_kereta`, `id_jadwal`, `id_tiket`, `id_penumpang`, `id_detail_kursi`
+Menggunakan custom naming: `id_stasiun`, `id_kereta`, `id_jadwal`, `id_tiket`, `id_penumpang`, `id_detail_tiket`
 
 ### Relasi Database
 
