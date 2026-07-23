@@ -6,7 +6,8 @@ export function useFormat() {
   function waktu(dateStr: string) {
     return new Date(dateStr).toLocaleTimeString("id-ID", {
       hour: "2-digit",
-      minute: "2-digit"
+      minute: "2-digit",
+      hour12: true
     })
   }
 
@@ -30,6 +31,7 @@ export function useFormat() {
     if (includeTime) {
       opts.hour = "2-digit"
       opts.minute = "2-digit"
+      opts.hour12 = true
     }
     return new Date(dateStr).toLocaleDateString("id-ID", opts)
   }

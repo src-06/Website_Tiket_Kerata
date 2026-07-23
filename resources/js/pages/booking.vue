@@ -171,7 +171,7 @@
                 v-for="j in jadwalLainnya"
                 :key="j.id_jadwal"
                 type="button"
-                class="flex w-full cursor-pointer items-center justify-between rounded-lg border p-3 text-left transition-all hover:border-primary/50 hover:bg-primary/5"
+                class="hover:border-primary/50 hover:bg-primary/5 flex w-full cursor-pointer items-center justify-between rounded-lg border p-3 text-left transition-all"
                 @click="pilihJadwal(j.id_jadwal)"
               >
                 <div class="flex items-center gap-3">
@@ -183,7 +183,8 @@
                 </div>
                 <div class="text-right">
                   <p class="text-sm font-medium">
-                    {{ formatWaktu(j.waktu_berangkat) }} - {{ estimasiTiba(j.waktu_berangkat, j.durasi_perjalanan) }}
+                    {{ formatWaktu(j.waktu_berangkat) }} -
+                    {{ estimasiTiba(j.waktu_berangkat, j.durasi_perjalanan) }}
                   </p>
                   <p class="text-primary text-xs font-semibold">{{ formatHarga(j.harga) }}</p>
                 </div>
@@ -256,9 +257,12 @@
             <div class="rounded-lg border border-dashed p-3 text-sm">
               <p class="text-muted-foreground">Jadwal default:</p>
               <p class="font-medium">
-                {{ formatWaktu(jadwal.waktu_berangkat) }} - {{ estimasiTiba(jadwal.waktu_berangkat, jadwal.durasi_perjalanan) }}
+                {{ formatWaktu(jadwal.waktu_berangkat) }} -
+                {{ estimasiTiba(jadwal.waktu_berangkat, jadwal.durasi_perjalanan) }}
               </p>
-              <p class="text-muted-foreground text-xs">(~{{ formatDurasi(jadwal.durasi_perjalanan) }})</p>
+              <p class="text-muted-foreground text-xs">
+                (~{{ formatDurasi(jadwal.durasi_perjalanan) }})
+              </p>
             </div>
             <div class="space-y-2">
               <Label for="waktu_custom">Atau atur waktu sendiri (opsional)</Label>
@@ -308,9 +312,7 @@
             <div class="flex items-center gap-2 text-sm">
               <ArrowRight class="size-4" />
               <span
-                >{{ jadwal.stasiun_tujuan.nama_stasiun }} ({{
-                  jadwal.stasiun_tujuan.kota
-                }})</span
+                >{{ jadwal.stasiun_tujuan.nama_stasiun }} ({{ jadwal.stasiun_tujuan.kota }})</span
               >
             </div>
             <Separator />
@@ -358,9 +360,7 @@
               </p>
               <div class="flex items-center justify-between">
                 <span class="font-medium">Total</span>
-                <span class="text-primary text-xl font-bold">{{
-                  formatHarga(totalHarga)
-                }}</span>
+                <span class="text-primary text-xl font-bold">{{ formatHarga(totalHarga) }}</span>
               </div>
             </div>
             <Button

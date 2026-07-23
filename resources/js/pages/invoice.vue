@@ -4,15 +4,7 @@
   import { Badge } from "@/components/ui/badge"
   import { Separator } from "@/components/ui/separator"
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-  import {
-    CheckCircle,
-    Train,
-    Clock,
-    ArmchairIcon,
-    User,
-    CreditCard,
-    Printer
-  } from "@lucide/vue"
+  import { CheckCircle, Train, Clock, ArmchairIcon, User, CreditCard, Printer } from "@lucide/vue"
   import { useFormat } from "@/composables/useFormat"
 
   defineProps<{
@@ -180,7 +172,7 @@
             <div
               v-for="(d, i) in tiket.detail_tikets"
               :key="d.id_detail_tiket"
-              class="flex items-center justify-between rounded bg-secondary/30 px-2 py-1"
+              class="bg-secondary/30 flex items-center justify-between rounded px-2 py-1"
             >
               <div class="flex items-center gap-2">
                 <span class="text-muted-foreground">{{ i + 1 }}.</span>

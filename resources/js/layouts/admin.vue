@@ -4,7 +4,7 @@
 </script>
 
 <template>
-  <SidebarProvider>
+  <SidebarProvider :default-open="false">
     <AdminSidebar class="print:hidden" />
     <main class="w-full print:w-full">
       <div class="print:hidden">

@@ -111,8 +111,13 @@
             <span class="flex items-center gap-1"
               ><Clock class="size-3" /> {{ formatDate(j.waktu_berangkat) }}</span
             >
-            <span>{{ formatWaktu(j.waktu_berangkat) }} - {{ estimasiTiba(j.waktu_berangkat, j.durasi_perjalanan) }}</span>
-            <span class="text-muted-foreground text-xs">(~{{ formatDurasi(j.durasi_perjalanan) }})</span>
+            <span
+              >{{ formatWaktu(j.waktu_berangkat) }} -
+              {{ estimasiTiba(j.waktu_berangkat, j.durasi_perjalanan) }}</span
+            >
+            <span class="text-muted-foreground text-xs"
+              >(~{{ formatDurasi(j.durasi_perjalanan) }})</span
+            >
             <span class="text-primary font-medium">{{ formatHarga(j.harga) }}</span>
           </div>
         </template>

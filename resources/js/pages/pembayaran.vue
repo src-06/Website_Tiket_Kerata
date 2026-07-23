@@ -6,7 +6,16 @@
   import { Badge } from "@/components/ui/badge"
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
   import { Separator } from "@/components/ui/separator"
-  import { Train, MapPin, Clock, Wallet, CreditCard, QrCode, CheckCircle, ArmchairIcon } from "@lucide/vue"
+  import {
+    Train,
+    MapPin,
+    Clock,
+    Wallet,
+    CreditCard,
+    QrCode,
+    CheckCircle,
+    ArmchairIcon
+  } from "@lucide/vue"
   import { useFormat } from "@/composables/useFormat"
 
   const props = defineProps<{
@@ -156,7 +165,7 @@
                 <div
                   v-for="(d, i) in tiket.detail_tikets"
                   :key="d.id_detail_tiket"
-                  class="flex items-center justify-between rounded-md bg-secondary/50 px-3 py-2"
+                  class="bg-secondary/50 flex items-center justify-between rounded-md px-3 py-2"
                 >
                   <div class="flex items-center gap-2">
                     <span class="text-muted-foreground text-xs font-medium">{{ i + 1 }}.</span>

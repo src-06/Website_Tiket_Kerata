@@ -4,7 +4,7 @@
 </script>
 
 <template>
-  <SidebarProvider>
+  <SidebarProvider :default-open="false">
     <AppSidebar class="print:hidden" />
     <main class="w-full print:w-full">
       <div class="flex items-center gap-2 print:hidden">

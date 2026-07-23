@@ -115,9 +115,7 @@
                 {{ t.kursi }}
               </p>
             </div>
-            <span class="text-primary text-sm font-semibold">{{
-              formatHarga(t.total_harga)
-            }}</span>
+            <span class="text-primary text-sm font-semibold">{{ formatHarga(t.total_harga) }}</span>
           </div>
         </div>
       </CardContent>
