@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Table('detail_tiket', key: 'id_detail_tiket')]
-#[Fillable(['id_tiket', 'id_penumpang', 'nama_kursi', 'harga_satuan'])]
+#[Fillable(['id_tiket', 'id_penumpang', 'nama', 'nama_kursi', 'harga_satuan'])]
 class DetailTiket extends Model
 {
     public function tiket(): BelongsTo

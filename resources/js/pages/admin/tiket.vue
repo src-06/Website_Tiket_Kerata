@@ -21,6 +21,7 @@
         total_harga: number
         status_pembayaran: string
         detail_tikets: {
+          nama: string | null
           nama_kursi: string
           penumpang: { nama: string; email: string }
         }[]
@@ -49,7 +50,7 @@
     const q = search.value.toLowerCase()
     return props.tikets.data.filter(
       t =>
-        t.detail_tikets.some(d => d.penumpang.nama.toLowerCase().includes(q)) ||
+        t.detail_tikets.some(d => (d.nama || d.penumpang.nama).toLowerCase().includes(q)) ||
         t.jadwal.kereta.nama_kereta.toLowerCase().includes(q) ||
         t.detail_tikets.some(d => d.nama_kursi.toLowerCase().includes(q)) ||
         String(t.id_tiket).includes(q)
@@ -103,7 +104,7 @@
             </Badge>
           </div>
           <p class="text-muted-foreground mt-1 text-sm">
-            {{ t.detail_tikets[0]?.penumpang.nama ?? "-" }} &middot;
+            {{ t.detail_tikets[0]?.nama ?? t.detail_tikets[0]?.penumpang.nama ?? "-" }} &middot;
             {{ t.jadwal.kereta.nama_kereta }} ({{ t.jadwal.kereta.kelas }})
           </p>
           <div

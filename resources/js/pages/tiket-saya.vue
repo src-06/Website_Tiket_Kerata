@@ -18,6 +18,7 @@
         total_harga: number
         status_pembayaran: string
         detail_tikets: {
+          nama: string | null
           nama_kursi: string
           penumpang: { nama: string }
         }[]

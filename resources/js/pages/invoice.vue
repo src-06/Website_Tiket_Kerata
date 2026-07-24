@@ -16,6 +16,7 @@
       waktu_berangkat_custom: string | null
       detail_tikets: {
         id_detail_tiket: number
+        nama: string | null
         nama_kursi: string
         harga_satuan: number
         penumpang: { nama: string; email: string; no_hp: string }
@@ -177,7 +178,7 @@
               <div class="flex items-center gap-2">
                 <span class="text-muted-foreground">{{ i + 1 }}.</span>
                 <User class="size-3 print:size-2.5" />
-                <span>{{ d.penumpang.nama }}</span>
+                <span>{{ d.nama || d.penumpang.nama }}</span>
               </div>
               <div class="flex items-center gap-1 font-medium">
                 <ArmchairIcon class="size-3 print:size-2.5" />

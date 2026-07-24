@@ -56,6 +56,8 @@ class PemesananController extends Controller
             'id_jadwal' => 'required|exists:jadwal,id_jadwal',
             'kursi' => 'required|array|min:1|max:4',
             'kursi.*' => 'required|string|max:3',
+            'penumpang' => 'required|array',
+            'penumpang.*' => 'required|string|max:255',
             'waktu_berangkat_custom' => 'nullable|date|after:now',
         ]);
 
@@ -84,6 +86,7 @@ class PemesananController extends Controller
                 DetailTiket::create([
                     'id_tiket' => $tiket->id_tiket,
                     'id_penumpang' => $request->user()->id_penumpang,
+                    'nama' => $validated['penumpang'][$kursi] ?? $request->user()->nama,
                     'nama_kursi' => $kursi,
                     'harga_satuan' => $jadwal->harga,
                 ]);

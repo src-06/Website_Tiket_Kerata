@@ -47,6 +47,7 @@
 
   const MAX_KURSI = 4
   const kursiDipilih = ref<string[]>([])
+  const dataPenumpang = ref<Record<string, string>>({})
   const waktuBerangkatCustom = ref("")
   const errors = ref<Record<string, string>>({})
 
@@ -84,8 +85,10 @@
     const idx = kursiDipilih.value.indexOf(k)
     if (idx >= 0) {
       kursiDipilih.value.splice(idx, 1)
+      delete dataPenumpang.value[k]
     } else if (kursiDipilih.value.length < MAX_KURSI) {
       kursiDipilih.value.push(k)
+      dataPenumpang.value[k] = ""
     }
   }
 
@@ -100,6 +103,12 @@
       errors.value.kursi = "Pilih minimal 1 kursi"
     }
 
+    for (const k of kursiDipilih.value) {
+      if (!dataPenumpang.value[k]?.trim()) {
+        errors.value[`penumpang_${k}`] = "Nama penumpang harus diisi"
+      }
+    }
+
     if (waktuBerangkatCustom.value) {
       const selectedDate = new Date(waktuBerangkatCustom.value)
       if (selectedDate <= new Date()) {
@@ -112,6 +121,7 @@
     router.post(simpan.url(), {
       id_jadwal: props.jadwal.id_jadwal,
       kursi: kursiDipilih.value,
+      penumpang: dataPenumpang.value,
       waktu_berangkat_custom: waktuBerangkatCustom.value || null
     })
   }
@@ -194,57 +204,91 @@
         </Card>
 
         <Card class="mt-6">
-          <CardHeader>
-            <CardTitle class="flex items-center gap-2">
-              <ArmchairIcon class="size-5" />
-              Pilih Kursi
-              <Badge
-                variant="secondary"
-                class="ml-auto"
-              >
-                {{ kursiDipilih.length }} / {{ MAX_KURSI }}
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div class="flex flex-wrap gap-2">
-              <button
-                v-for="k in semuaKursi"
-                :key="k"
-                type="button"
-                :disabled="kursiTerpakai.includes(k)"
-                :class="[
-                  'flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-all',
-                  kursiTerpakai.includes(k)
-                    ? 'bg-muted/50 text-muted-foreground/60 cursor-not-allowed line-through'
-                    : kursiDipilih.includes(k)
-                      ? 'bg-primary text-primary-foreground scale-110 shadow-md'
-                      : 'bg-secondary hover:bg-secondary/80 hover:scale-105'
-                ]"
-                @click="toggleKursi(k)"
-              >
-                {{ k }}
-              </button>
-            </div>
-            <div class="mt-4 flex items-center gap-4 text-sm">
-              <span class="flex items-center gap-1"
-                ><span class="bg-secondary inline-block size-4 rounded" /> Tersedia</span
-              >
-              <span class="flex items-center gap-1"
-                ><span class="bg-primary inline-block size-4 rounded" /> Dipilih</span
-              >
-              <span class="flex items-center gap-1"
-                ><span class="bg-muted inline-block size-4 rounded" /> Terisi</span
-              >
-            </div>
-            <p
-              v-if="errors.kursi"
-              class="text-destructive mt-2 text-xs"
+        <CardHeader>
+          <CardTitle class="flex items-center gap-2">
+            <ArmchairIcon class="size-5" />
+            Pilih Kursi
+            <Badge
+              variant="secondary"
+              class="ml-auto"
             >
-              {{ errors.kursi }}
+              {{ kursiDipilih.length }} / {{ MAX_KURSI }}
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="k in semuaKursi"
+              :key="k"
+              type="button"
+              :disabled="kursiTerpakai.includes(k)"
+              :class="[
+                'flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-sm font-medium transition-all',
+                kursiTerpakai.includes(k)
+                  ? 'bg-muted/50 text-muted-foreground/60 cursor-not-allowed line-through'
+                  : kursiDipilih.includes(k)
+                    ? 'bg-primary text-primary-foreground scale-110 shadow-md'
+                    : 'bg-secondary hover:bg-secondary/80 hover:scale-105'
+              ]"
+              @click="toggleKursi(k)"
+            >
+              {{ k }}
+            </button>
+          </div>
+          <div class="mt-4 flex items-center gap-4 text-sm">
+            <span class="flex items-center gap-1"
+              ><span class="bg-secondary inline-block size-4 rounded" /> Tersedia</span
+            >
+            <span class="flex items-center gap-1"
+              ><span class="bg-primary inline-block size-4 rounded" /> Dipilih</span
+            >
+            <span class="flex items-center gap-1"
+              ><span class="bg-muted inline-block size-4 rounded" /> Terisi</span
+            >
+          </div>
+          <p
+            v-if="errors.kursi"
+            class="text-destructive mt-2 text-xs"
+          >
+            {{ errors.kursi }}
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card
+        v-if="kursiDipilih.length > 0"
+        class="mt-6"
+      >
+        <CardHeader>
+          <CardTitle class="flex items-center gap-2">
+            <User class="size-5" />
+            Data Penumpang per Kursi
+          </CardTitle>
+        </CardHeader>
+        <CardContent class="space-y-4">
+          <div
+            v-for="k in kursiDipilih"
+            :key="k"
+            class="space-y-2"
+          >
+            <Label :for="`penumpang-${k}`">
+              Nama Penumpang Kursi <span class="font-bold">{{ k }}</span>
+            </Label>
+            <Input
+              :id="`penumpang-${k}`"
+              v-model="dataPenumpang[k]"
+              placeholder="Masukkan nama penumpang"
+            />
+            <p
+              v-if="errors[`penumpang_${k}`]"
+              class="text-destructive text-xs"
+            >
+              {{ errors[`penumpang_${k}`] }}
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
         <Card class="mt-6">
           <CardHeader>
