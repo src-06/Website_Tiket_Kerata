@@ -26,7 +26,7 @@ class PembayaranController extends Controller
     public function prosesPembayaran(Request $request, Tiket $tiket)
     {
         $validated = $request->validate([
-            'metode_bayar' => 'required|in:Transfer Bank,E-Wallet,QRIS',
+            'metode_bayar' => 'required|string|max:50',
         ]);
 
         if ($tiket->status_pembayaran === 'Lunas') {

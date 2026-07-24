@@ -17,6 +17,7 @@
     ArmchairIcon
   } from "@lucide/vue"
   import { useFormat } from "@/composables/useFormat"
+  import QRISpng from "../../img/qris.png"
 
   const props = defineProps<{
     tiket: {
@@ -42,6 +43,7 @@
   }>()
 
   const metodeBayar = ref("")
+  const subMetode = ref("")
   const loading = ref(false)
   const { harga: formatHarga, waktu: formatWaktu } = useFormat()
 
@@ -51,11 +53,22 @@
     return formatWaktu(d.toISOString())
   }
 
+  function pilihMetode(id: string) {
+    if (metodeBayar.value !== id) {
+      metodeBayar.value = id
+      subMetode.value = ""
+    }
+  }
+
   function bayar() {
-    if (!metodeBayar.value) return
+    let metode = metodeBayar.value
+    if (subMetode.value) {
+      metode = `${metode} - ${subMetode.value}`
+    }
+    if (!metode) return
     loading.value = true
     router.post(proses.url(props.tiket.id_tiket), {
-      metode_bayar: metodeBayar.value
+      metode_bayar: metode
     })
   }
 
@@ -69,6 +82,15 @@
     { id: "E-Wallet", label: "E-Wallet", icon: Wallet, desc: "GoPay, OVO, Dana, ShopeePay" },
     { id: "QRIS", label: "QRIS", icon: QrCode, desc: "Scan QRIS di aplikasi pembayaran" }
   ]
+
+  const bankList = [
+    { id: "BCA", norek: "1234567890", atasNama: "PT Tiket Kereta Indonesia" },
+    { id: "Mandiri", norek: "1234567891", atasNama: "PT Tiket Kereta Indonesia" },
+    { id: "BNI", norek: "1234567892", atasNama: "PT Tiket Kereta Indonesia" },
+    { id: "BRI", norek: "1234567893", atasNama: "PT Tiket Kereta Indonesia" }
+  ]
+
+  const ewalletList = ["GoPay", "DANA", "OVO", "ShopeePay"]
 </script>
 
 <template>
@@ -98,7 +120,7 @@
                   ? 'border-primary bg-primary/5 ring-primary/20 ring-2'
                   : 'hover:border-primary/50'
               ]"
-              @click="metodeBayar = m.id"
+              @click="pilihMetode(m.id)"
             >
               <component
                 :is="m.icon"
@@ -114,6 +136,81 @@
                 class="text-primary ml-auto size-5"
               />
             </button>
+
+            <div
+              v-if="metodeBayar === 'Transfer Bank'"
+              class="space-y-2 pt-2"
+            >
+              <p class="text-muted-foreground text-xs font-medium uppercase">Pilih Bank Tujuan</p>
+              <button
+                v-for="bank in bankList"
+                :key="bank.id"
+                type="button"
+                :class="[
+                  'flex w-full cursor-pointer items-center justify-between rounded-lg border p-3 text-left transition-all',
+                  subMetode === bank.id
+                    ? 'border-primary bg-primary/5 ring-primary/20 ring-2'
+                    : 'hover:border-primary/50'
+                ]"
+                @click="subMetode = bank.id"
+              >
+                <div>
+                  <p class="font-medium">{{ bank.id }}</p>
+                  <p class="text-muted-foreground text-xs">{{ bank.norek }}</p>
+                  <p class="text-muted-foreground text-xs">a/n {{ bank.atasNama }}</p>
+                </div>
+                <CheckCircle
+                  v-if="subMetode === bank.id"
+                  class="text-primary size-5"
+                />
+              </button>
+            </div>
+
+            <div
+              v-if="metodeBayar === 'E-Wallet'"
+              class="space-y-2 pt-2"
+            >
+              <p class="text-muted-foreground text-xs font-medium uppercase">Pilih E-Wallet</p>
+              <button
+                v-for="ew in ewalletList"
+                :key="ew"
+                type="button"
+                :class="[
+                  'flex w-full cursor-pointer items-center justify-between rounded-lg border p-3 text-left transition-all',
+                  subMetode === ew
+                    ? 'border-primary bg-primary/5 ring-primary/20 ring-2'
+                    : 'hover:border-primary/50'
+                ]"
+                @click="subMetode = ew"
+              >
+                <span class="font-medium">{{ ew }}</span>
+                <CheckCircle
+                  v-if="subMetode === ew"
+                  class="text-primary size-5"
+                />
+              </button>
+            </div>
+
+            <div
+              v-if="metodeBayar === 'QRIS'"
+              class="space-y-2 pt-2"
+            >
+              <p class="text-muted-foreground text-xs font-medium uppercase">Scan QRIS Berikut</p>
+              <div class="flex justify-center py-4">
+                <div
+                  class="flex size-56 items-center justify-center rounded-xl border-2 border-dashed p-2"
+                >
+                  <img
+                    :src="QRISpng"
+                    alt="QRIS"
+                    class="rounded-lg"
+                  />
+                </div>
+              </div>
+              <p class="text-muted-foreground text-center text-xs">
+                Scan menggunakan aplikasi pembayaran yang mendukung QRIS
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
